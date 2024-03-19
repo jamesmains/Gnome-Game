@@ -52,6 +52,6 @@ public class EntityDamageSourceVolume : Entity {
                 if (ParentEntity != null && IgnoreFriendlies && entity.Team == ParentEntity.Team) return;
                 entity.TakeDamage(DamageSources, hitPoint, ParentEntity);
             }
-        Die();
+        Die(null);
     }
 }

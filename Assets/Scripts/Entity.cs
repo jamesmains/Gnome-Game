@@ -107,7 +107,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         if (attacker != null && attacker.Team == Team && attacker.Team != EntityTeams.IgnoreTeam) return false;
 
         StartCoroutine(ProcessDamageBuffer());
-
+        
         var dmg = 0;
         foreach (var source in damageSources) {
             var sourceDmg = source.DealtDamage();
@@ -128,6 +128,10 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
                 sourceDmg += value;
                 isCritical = true;
             }
+
+            if (isCritical) {
+                PopupManager.DisplayCritVfx(hitPoint);
+            }
             
             sourceDmg = (int) Mathf.Clamp(sourceDmg, 0, Mathf.Infinity);
             dmg += sourceDmg;
@@ -136,7 +140,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
         dmg = (int) Mathf.Clamp(dmg, 0, Mathf.Infinity);
         Health -= dmg;
-        if (Health <= 0) Die();
+        if (Health <= 0) Die(attacker);
         Pooler.Instance.SpawnObject(HurtVfx,
             transform.position);
         OnTakeDamage.Invoke();
@@ -149,8 +153,10 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         ImmuneToDamage = false;
     }
 
-    public virtual void Die() {
+    public virtual void Die(Entity killer) {
         if (IsDead) return;
+        if(killer != null)
+            print($"{this.gameObject.name} was slain by {killer.gameObject.name}");
         IsDead = true;
         OnDeath.Invoke(this);
         if (WaitForTriggerToCommitDie) return;

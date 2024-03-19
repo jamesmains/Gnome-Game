@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -42,6 +43,20 @@ public class PlayerCharacter : Character {
             dir = dist > IdealAttackRange.x ? dir : dist < IdealAttackRange.y ? dir * -1 : Vector3.zero;
             Rb.AddForce(dir * (Time.deltaTime * MoveSpeed), ForceMode.Impulse);
         }
+        
+        var velocity = Rb.velocity;
+        
+        FacingDirection = velocity.x == 0 ? FacingDirection : velocity.x > 0 ? -1 : 1;
+        if (!(Math.Abs(transform.localScale.x - FacingDirection) > 0)) return;
+        var scale = transform.localScale;
+        var targetScale = scale;
+        targetScale.x = FacingDirection * CachedScale;
+        scale = Vector3.MoveTowards(scale, targetScale, Time.deltaTime * ResizeSpeed);
+        transform.localScale = scale;
+        
+        var isMoving = Mathf.Abs(velocity.x) > MinimumVelocityForAnimating ||
+                       Mathf.Abs(velocity.z) > MinimumVelocityForAnimating;
+        Anim.SetBool(IsMoving, isMoving);
     }
 
     protected override void Update() {

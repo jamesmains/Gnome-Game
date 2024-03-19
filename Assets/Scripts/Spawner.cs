@@ -9,12 +9,21 @@ using Random = UnityEngine.Random;
 public class Spawner : MonoBehaviour {
     [SerializeField] [FoldoutGroup("Hooks")]
     private List<GameObject> SpawnPool;
+    
+    [SerializeField] [FoldoutGroup("Hooks")]
+    private Transform SpawnPoint;
+    
+    [SerializeField] [FoldoutGroup("Hooks")]
+    private GameObject SpawnEffect;
 
+    [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Maximum distance the player can be while the spawner still functions")]
+    private float PlayerDistanceThreshold;
+    
+    [SerializeField] [FoldoutGroup("Settings")] [Tooltip("How many can be spawned together")]
+    private int MaxGroupCount;
+    
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("X: Min distance, Y: Max distance")]
     private Vector2 SpawnRange;
-
-    [SerializeField] [FoldoutGroup("Settings")] [Tooltip("How many can be spawned together")]
-    private Vector2 SpawnGrouping;
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("X: Min time till next spawn, Y: Max time till next spawn")]
     private Vector2 SpawnFrequency;
@@ -43,9 +52,14 @@ public class Spawner : MonoBehaviour {
     private UnityEvent OnSpawnDepletion;
 
     private void Awake() {
+        if (SpawnPoint == null)
+            SpawnPoint = this.transform;
     }
 
     private void Update() {
+        var PlayerIsOutOfRange = Vector3.Distance(SpawnPoint.position, PlayerCharacter.CurrentCharacter.transform.position) >
+                       PlayerDistanceThreshold;
+        if (PlayerIsOutOfRange) return;
         if (AvailableSpawns <= 0 && AvailableSpawns != -1 || SpawnedEntities.Count >= SpawnLimit) return;
         if (TimeUntilNextSpawn > 0) {
             TimeUntilNextSpawn -= Time.deltaTime;
@@ -54,8 +68,7 @@ public class Spawner : MonoBehaviour {
     }
 
     private void Spawn() {
-        int groupCount = Random.Range((int) SpawnGrouping.x, (int) SpawnGrouping.y + 1);
-        print(groupCount);
+        int groupCount = Random.Range(0, MaxGroupCount + 1);
         int maxAvailableSpawns = SpawnLimit > AvailableSpawns ? SpawnLimit : AvailableSpawns;
         groupCount = Mathf.Clamp(groupCount, 0, maxAvailableSpawns);
 
@@ -63,7 +76,7 @@ public class Spawner : MonoBehaviour {
 
         for (int i = 0; i < groupCount; i++) {
             int r = Random.Range((int) 0, (int) SpawnPool.Count);
-            var pos = transform.position;
+            var pos = SpawnPoint.position;
             var rX = Random.Range(SpawnRange.x, SpawnRange.y);
             var rY = Random.Range(SpawnRange.x, SpawnRange.y);
             var flipX = Random.Range(0f, 100f) > 50;
@@ -73,6 +86,8 @@ public class Spawner : MonoBehaviour {
             pos += new Vector3(rX, pos.y, rY);
             var entity = Pooler.Instance.SpawnObject(SpawnPool[r], pos).GetComponent<Entity>();
             entity.OnDeath.AddListener(RemoveEntityFromList);
+            if(SpawnEffect!=null)
+                Pooler.Instance.SpawnObject(SpawnEffect, pos);
             SpawnedEntities.Add(entity);
         }
 

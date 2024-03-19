@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Character : SerializedMonoBehaviour {
     [SerializeField] [FoldoutGroup("Settings")]
-    private float ResizeSpeed = 5;
+    protected float ResizeSpeed = 5;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    private float MinimumVelocityForAnimating = 0.15f;
+    protected float MinimumVelocityForAnimating = 0.15f;
 
     [SerializeField] [FoldoutGroup("Hooks")]
     public Sprite CharacterSprite;
@@ -19,15 +19,15 @@ public class Character : SerializedMonoBehaviour {
     protected Animator Anim;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private int FacingDirection = 1;
+    protected int FacingDirection = 1;
 
-    [SerializeField] [FoldoutGroup("Status")]
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected bool IsLocked;
     
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private float CachedScale;
+    protected float CachedScale;
 
-    private static readonly int IsMoving = Animator.StringToHash("IsMoving");
+    protected static readonly int IsMoving = Animator.StringToHash("IsMoving");
 
     protected virtual void Awake() {
         if (Rb == null) Rb = GetComponent<Rigidbody>();

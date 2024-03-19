@@ -6,5 +6,5 @@ public interface IDamageable {
 }
 
 public interface IKillable {
-    public void Die();
+    public void Die(Entity killer);
 }

@@ -14,7 +14,7 @@ public class SelfDestruct : MonoBehaviour {
     private IEnumerator DestructSelf() {
         yield return new WaitForSeconds(selfDestructTime);
         if (killable != null)
-            killable.Die();
+            killable.Die(null);
         else Destroy(gameObject);
     }
 }
