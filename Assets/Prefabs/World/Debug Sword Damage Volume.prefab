@@ -81,6 +81,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Team: 0
+  Type: 0
+  IgnoreDamage: 0
+  IgnoreTeam: 0
+  Detectable: 0
+  WaitForTriggerToCommitDie: 0
   MaxHealth: 0
   Health: 0
   StartAtMaxHealth: 1
@@ -91,7 +96,14 @@ MonoBehaviour:
   DeathVfx: {fileID: 5298931811058931575, guid: 8c90852f3825d4a459fd92cfa2d2958b, type: 3}
   ParentEntity: {fileID: 0}
   ImmuneToDamage: 0
+  IsDead: 0
+  OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
   OnTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
     m_PersistentCalls:
       m_Calls: []
   TriggerOnEntry: 1

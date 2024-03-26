@@ -4,7 +4,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class EntityDamageSourceVolume : Entity {
-    
     [SerializeField] [FoldoutGroup("Settings")]
     private bool TriggerOnEntry = true;
 
@@ -13,7 +12,7 @@ public class EntityDamageSourceVolume : Entity {
 
     [SerializeField] [FoldoutGroup("Settings")]
     private bool TriggerOnStay;
-    
+
     [SerializeField] [FoldoutGroup("Settings")]
     private bool IgnoreFriendlies;
 
@@ -22,8 +21,8 @@ public class EntityDamageSourceVolume : Entity {
 
     [SerializeField] [FoldoutGroup("Settings")]
     private List<DamageSource> DamageSources = new();
-    
-    private const int EntityLayer =~ 6; // *shrug* idk either
+
+    private const int EntityLayer = ~ 6; // *shrug* idk either
 
     private void OnTriggerEnter(Collider other) {
         if (!TriggerOnEntry) return;
@@ -46,12 +45,15 @@ public class EntityDamageSourceVolume : Entity {
         if ((IgnoredLayers.value & (1 << hitLayer)) > 0) return;
 
         var hitPoint = other.ClosestPoint(transform.position);
-            print($"Hit: {other.gameObject.name}");
-            var entity = other.gameObject.GetComponentInChildren<Entity>();
-            if (entity != null) {
-                if (ParentEntity != null && IgnoreFriendlies && entity.Team == ParentEntity.Team) return;
-                entity.TakeDamage(DamageSources, hitPoint, ParentEntity);
-            }
-        Die(null);
+        var entity = other.gameObject.GetComponentInChildren<Entity>();
+        if (entity != null) {
+            if (ParentEntity != null && IgnoreFriendlies && entity.Team == ParentEntity.Team) return;
+            if (!entity.Detectable) return;
+            entity.TakeDamage(DamageSources, hitPoint, ParentEntity);
+        }
+
+        if (Health == -1) return;
+        Health -= 1;
+        if (Health <= 0) Die(null);
     }
 }

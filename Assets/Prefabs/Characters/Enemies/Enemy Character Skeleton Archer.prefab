@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 4065379463942150315}
   - component: {fileID: 1969554354567410523}
   - component: {fileID: 8381932818622247068}
+  - component: {fileID: 7248047389486507296}
   m_Layer: 6
   m_Name: Enemy Character Skeleton Archer
   m_TagString: Untagged
@@ -217,6 +218,8 @@ MonoBehaviour:
   Rb: {fileID: 0}
   Anim: {fileID: 0}
   FacingDirection: 1
+  IsLocked: 0
+  CachedScale: 0
   EnemyWeapon: {fileID: 0}
   MoveSpeed: 75
   IdealAttackRange: {x: 2.5, y: 1}
@@ -233,6 +236,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Team: 3
+  Type: 0
+  WaitForTriggerToCommitDie: 0
   MaxHealth: 10
   Health: 0
   StartAtMaxHealth: 1
@@ -243,9 +248,28 @@ MonoBehaviour:
   DeathVfx: {fileID: 725748389856807714, guid: 1da6d5d330e3fae49bdd1d6560a604c1, type: 3}
   ParentEntity: {fileID: 0}
   ImmuneToDamage: 0
+  IsDead: 0
+  OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
   OnTakeDamage:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7248047389486507296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4331903525130042318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc40b0a5edbfdb445afa0599ed2a8a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FireRate: 0
+  BulletOrigin: {fileID: 0}
+  WieldingEntity: {fileID: 0}

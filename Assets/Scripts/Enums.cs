@@ -2,5 +2,17 @@ public enum DamageType {
     Nature,
     Fire,
     Water,
-    WorldEnvironment
+    Holy,
+    Dark
+}
+public enum EntityTeams {
+    Player,
+    Enemies,
+    Environment
+}
+
+public enum EntityType {
+    Undefined,
+    Humanoid,
+    Undead
 }

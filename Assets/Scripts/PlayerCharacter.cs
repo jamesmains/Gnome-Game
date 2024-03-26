@@ -6,72 +6,89 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerCharacter : Character {
-
-    [SerializeField] [FoldoutGroup("Hooks")]
-    private Weapon CurrentWeapon;
-
     [SerializeField] [FoldoutGroup("Settings")]
     private float MoveSpeed = 250f;
-    
+
     [SerializeField] [FoldoutGroup("Settings")]
-    private Vector2 IdealAttackRange;
+    private float GroupTetherMaxDistance;
 
     [SerializeField] [FoldoutGroup("Settings")]
     private bool DebugFlagAutoSelectCharacter = false;
 
+    [SerializeField] [FoldoutGroup("Hooks")]
+    private Transform NonPcWeaponBulletOrigin;
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     private Vector3 playerInput;
-    public static Character CurrentCharacter;
-    public static UnityEvent<Character> OnPlayerCharacterPossession = new();
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    private Entity FocussedEntity;
 
-    protected override void Awake() {
-        base.Awake();
+    public static PlayerCharacter CurrentCharacter;
+    public static UnityEvent<PlayerCharacter> OnPlayerCharacterPossession = new();
+
+    private void Start() {
         if (DebugFlagAutoSelectCharacter)
             Possess();
     }
 
-    public void FixedUpdate() {
-        if (CurrentCharacter == this) {
-            Rb.AddForce(playerInput.normalized * (Time.deltaTime * MoveSpeed), ForceMode.Impulse);    
-        }
-        else {
-            
-            var playerPosition = CurrentCharacter.transform.position;
-            var pos = transform.position;
-            var dir = playerPosition - pos;
-            var dist = Vector3.Distance(playerPosition, pos);
-            dir = dir.normalized;
-            dir = dist > IdealAttackRange.x ? dir : dist < IdealAttackRange.y ? dir * -1 : Vector3.zero;
-            Rb.AddForce(dir * (Time.deltaTime * MoveSpeed), ForceMode.Impulse);
-        }
-        
-        var velocity = Rb.velocity;
-        
-        FacingDirection = velocity.x == 0 ? FacingDirection : velocity.x > 0 ? -1 : 1;
-        if (!(Math.Abs(transform.localScale.x - FacingDirection) > 0)) return;
-        var scale = transform.localScale;
-        var targetScale = scale;
-        targetScale.x = FacingDirection * CachedScale;
-        scale = Vector3.MoveTowards(scale, targetScale, Time.deltaTime * ResizeSpeed);
-        transform.localScale = scale;
-        
-        var isMoving = Mathf.Abs(velocity.x) > MinimumVelocityForAnimating ||
-                       Mathf.Abs(velocity.z) > MinimumVelocityForAnimating;
-        Anim.SetBool(IsMoving, isMoving);
-    }
-
     protected override void Update() {
         base.Update();
-        if (CurrentCharacter != this) return;
-        
-        if(Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI)
-            CurrentWeapon.Fire(AimController.PlayerAim.BulletSpawnPoint);
-        
-        playerInput.x = Input.GetAxisRaw("Horizontal");
-        playerInput.z = Input.GetAxisRaw("Vertical");
+        if (CurrentCharacter == this) {
+            if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI)
+                HeldWeapon.Fire(AimController.PlayerAim.BulletSpawnPoint);
+
+            playerInput.x = Input.GetAxisRaw("Horizontal");
+            playerInput.z = Input.GetAxisRaw("Vertical");
+        }
+        else {
+            if (FocussedEntity == null) return;
+            float v = NavAgent.velocity.sqrMagnitude;
+            bool canAttack = (v != 0 && CanAttackWhileMoving) ||
+                             (v == 0 && CanAttackWhileNotMoving);
+            if (!canAttack) return;
+            var dest = FocussedEntity.transform.position;
+            dest.y = NonPcWeaponBulletOrigin.position.y;
+            HeldWeapon.FireTowards(NonPcWeaponBulletOrigin,dest);
+        }
+    }
+
+    protected override void HandleAnimation() {
+        if (CurrentCharacter == this) {
+            var isMoving = Rb.velocity.sqrMagnitude > 0;
+            Anim.SetBool(IsMoving, isMoving);
+        }
+        else base.HandleAnimation();
+    }
+
+    protected override void HandleMovement() {
+        var playerPosition = PlayerCharacter.CurrentCharacter.transform.position;
+        if (CurrentCharacter == this) {
+            var dir = playerInput.normalized * (Time.deltaTime * MoveSpeed);
+            TargetPosition = transform.position + dir;
+            Rb.AddForce(dir, ForceMode.Impulse);
+        }
+        else {
+            if (FocussedEntity == null || FocussedEntity.IsDead) {
+                FocussedEntity = SelfEntity.FindNearestEnemy();
+            
+            }
+            
+            TargetPosition = playerPosition;
+            if (TargetPosition != NavAgent.destination &&
+                Vector3.Distance(transform.position, playerPosition) > GroupTetherMaxDistance) {
+                NavAgent.SetDestination(TargetPosition);
+                print("setting destination");
+            }
+
+            transform.position =
+                Vector3.MoveTowards(transform.position, NavAgent.nextPosition, Time.deltaTime * NavAgent.speed);
+        }
     }
 
     [Button]
     public void Possess() {
+        print(gameObject.name);
         CurrentCharacter = this;
         OnPlayerCharacterPossession.Invoke(this);
     }

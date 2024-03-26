@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EntitySpawnOnDeath : Entity {
     [SerializeField] [FoldoutGroup("Hooks")]
-    private GameObject DeathSpawn;
+    private GameObject EntityToSpawnOnDeath;
 
     private void Awake() {
         OnDeath.AddListener(delegate { SpawnDeathEntity();});
@@ -14,6 +14,6 @@ public class EntitySpawnOnDeath : Entity {
 
     private void SpawnDeathEntity() {
         // Todo: Check if game is over so it just removes them without adding a new entity
-        Pooler.Instance.SpawnObject(DeathSpawn,transform.position);
+        Pooler.Instance.SpawnObject(EntityToSpawnOnDeath,transform.position);
     }
 }
