@@ -57,15 +57,20 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent OnSpawn = new();
+    
+    [SerializeField] [FoldoutGroup("Events")]
+    public UnityEvent<Entity, Entity> OnHit = new(); // Self, Attacker -- Damage Applied NOT required
 
     [SerializeField] [FoldoutGroup("Events")]
-    public UnityEvent<Entity, Entity> OnTakeDamage = new(); // Self, Attacker
+    public UnityEvent<Entity, Entity> OnTakeDamage = new(); // Self, Attacker -- Damage must be applied
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent<Entity> OnDeath = new();
 
-    public static List<Entity> AllEntities = new();
+    private static List<Entity> AllEntities = new();
 
+    private const int EntityLayer = ~ 6; // *shrug* idk either
+    
     protected virtual void OnEnable() {
         AllEntities.Add(this);
 
@@ -109,6 +114,19 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
+    public bool CanSeeEntity(Entity targetEntity) {
+        var targetDirection = targetEntity.transform.position - transform.position;
+        if (!Physics.Raycast(transform.position,targetDirection, out var hit,
+                Mathf.Infinity, EntityLayer)) return false;
+        hit.collider.gameObject.TryGetComponent<Entity>(out var e);
+        if (e == null) return false;
+        return e == targetEntity;
+    }
+
+    public bool WithinReachOfEntity(Entity targetEntity, float maxDistance) {
+        return Vector3.Distance(transform.position, targetEntity.transform.position) < maxDistance;
+    }
+
     public virtual bool TakeDamage(List<DamageSource> damageSources, Vector3 hitPoint, Entity attacker = null,
         bool canHarmAttacker = false) {
         if (ImmuneToDamage || IgnoreDamage) return false;
@@ -138,14 +156,10 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
                 sourceDmg += value;
                 isCritical = true;
             }
-
-            if (isCritical) {
-                PopupManager.DisplayCritVfx(hitPoint);
-            }
-
+            
             sourceDmg = (int) Mathf.Clamp(sourceDmg, 0, Mathf.Infinity);
             dmg += sourceDmg;
-            PopupManager.DisplayWorldValuePopup(sourceDmg, hitPoint);
+            PopupManager.DisplayWorldValuePopup(sourceDmg, hitPoint, isCritical);
         }
 
         dmg = (int) Mathf.Clamp(dmg, 0, Mathf.Infinity);

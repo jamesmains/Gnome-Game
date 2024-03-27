@@ -11,7 +11,10 @@ public class Character : SerializedMonoBehaviour {
     protected float MinimumVelocityForAnimating = 0.15f;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    protected Vector2 IdealInteractionRange;
+    protected float IdealInteractionRange;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    protected float RepelFromOthersRange;
     
     [SerializeField] [FoldoutGroup("Settings")]
     protected bool CanAttackWhileMoving = true;

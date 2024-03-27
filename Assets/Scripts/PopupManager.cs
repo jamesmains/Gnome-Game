@@ -5,17 +5,24 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class PopupManager : MonoBehaviour {
-    [SerializeField] [FoldoutGroup("Settings")]
-    private Vector3 CritVfxOffset;
 
     [SerializeField] [FoldoutGroup("Settings")]
     private Vector3 NumberVfxOffset;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private Color StandardTextColor;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private Color CritTextColor;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private float StandardFontSize;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private float CritFontSize;
 
     [SerializeField] [FoldoutGroup("Hooks")]
     private GameObject ValuePopupDisplayObject;
-
-    [SerializeField] [FoldoutGroup("Hooks")]
-    private GameObject CritHitObject;
 
     private static PopupManager Instance;
 
@@ -23,14 +30,11 @@ public class PopupManager : MonoBehaviour {
         Instance = this;
     }
 
-    public static void DisplayCritVfx(Vector3 location) {
-        location += Instance.CritVfxOffset;
-        Pooler.Instance.SpawnObject(Instance.CritHitObject, location);
-    }
-
-    public static void DisplayWorldValuePopup(int value, Vector3 location) {
+    public static void DisplayWorldValuePopup(int value, Vector3 location, bool crit = false) {
         location += Instance.NumberVfxOffset;
+        var c = crit ? Instance.CritTextColor : Instance.StandardTextColor;
+        var size = crit ? Instance.CritFontSize : Instance.StandardFontSize;
         var obj = Pooler.Instance.SpawnObject(Instance.ValuePopupDisplayObject, location);
-        obj.GetComponent<ValuePopupDisplay>().SetValue(value.ToString());
+        obj.GetComponent<ValuePopupDisplay>().SetValue(value.ToString(), c, size);
     }
 }

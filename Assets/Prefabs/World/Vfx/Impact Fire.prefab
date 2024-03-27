@@ -4769,7 +4769,7 @@ GameObject:
   - component: {fileID: 2504214343621411457}
   - component: {fileID: 4741991464754137355}
   m_Layer: 0
-  m_Name: CFXR3 Hit Fire B (Air)
+  m_Name: Impact Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

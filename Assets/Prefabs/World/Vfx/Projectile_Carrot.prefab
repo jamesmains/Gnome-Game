@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 198858680741015720}
   - component: {fileID: 65272339866173868}
   m_Layer: 0
-  m_Name: vfx_Projectile_Carrot
+  m_Name: Projectile_Carrot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

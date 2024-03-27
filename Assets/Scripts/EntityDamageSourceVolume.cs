@@ -22,8 +22,6 @@ public class EntityDamageSourceVolume : Entity {
     [SerializeField] [FoldoutGroup("Settings")]
     private List<DamageSource> DamageSources = new();
 
-    private const int EntityLayer = ~ 6; // *shrug* idk either
-
     private void OnTriggerEnter(Collider other) {
         if (!TriggerOnEntry) return;
         ProcessHit(other);
@@ -48,6 +46,7 @@ public class EntityDamageSourceVolume : Entity {
         var entity = other.gameObject.GetComponentInChildren<Entity>();
         if (entity != null) {
             if (ParentEntity != null && IgnoreFriendlies && entity.Team == ParentEntity.Team) return;
+            entity.OnHit.Invoke(entity,null);
             if (!entity.Detectable) return;
             entity.TakeDamage(DamageSources, hitPoint, ParentEntity);
         }
