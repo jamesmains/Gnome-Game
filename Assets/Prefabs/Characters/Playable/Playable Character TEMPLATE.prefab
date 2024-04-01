@@ -128,12 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a543c5a48fc0543b660ccd96e038f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FireRate: {x: 0.45, y: 0.45}
+  Settings: {fileID: 0}
   BulletOrigin: {fileID: 0}
   WieldingEntity: {fileID: 5231840508669681452}
-  AssignToWeilder: 1
-  AssignToWeilderTeam: 1
-  BulletObject: {fileID: 5675946323038070197, guid: 0634b4dbf7dd1784eafce692d8a69db3, type: 3}
 --- !u!1 &8036281465405216601
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,7 +354,7 @@ NavMeshAgent:
   m_Acceleration: 100
   avoidancePriority: 50
   m_AngularSpeed: 0
-  m_StoppingDistance: 1
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

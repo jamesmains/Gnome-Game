@@ -9,6 +9,7 @@ public class WeaponSettings : ScriptableObject {
     [PreviewField] public Sprite WeaponIcon;
 
     [FoldoutGroup("Settings")] public Vector2 WeaponFireRate;
+    [FoldoutGroup("Settings")] public float AttackRange = 3f;
     [FoldoutGroup("Settings")] public GameObject WeaponBullet;
     [FoldoutGroup("Settings")] public List<DamageSource> WeaponDamageSources = new();
     [FoldoutGroup("Settings")] public bool AssignToWeilder = true;

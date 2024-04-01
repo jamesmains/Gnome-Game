@@ -7421,6 +7421,10 @@ PrefabInstance:
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 865291813658066163, guid: e920c6ab390a8d94d84f80c7f928fa0b, type: 3}
+    - target: {fileID: 3373596449847729914, guid: e920c6ab390a8d94d84f80c7f928fa0b, type: 3}
+      propertyPath: IsMinion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9016331836639260221, guid: e920c6ab390a8d94d84f80c7f928fa0b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.5976174
@@ -25946,11 +25950,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ff61b6504c64be4981fd49ce1a0e7d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterTarget: {fileID: 0}
-  heldTarget: {fileID: 0}
-  offset: {x: 0, y: 2.5, z: -3}
-  moveSpeed: 10
-  tempTransitionEffect: {fileID: 1047758637}
+  PanSpeed: 6
+  MoveSpeed: 12
+  ScreenBorderPadding: 5
+  Offset: {x: 0, y: 2.5, z: -3}
+  TransitionEffect: {fileID: 1047758637}
+  CharacterTarget: {fileID: 0}
+  HeldTarget: {fileID: 0}
+  TargetPosition: {x: 0, y: 0, z: 0}
+  ControlInput: {x: 0, y: 0}
 --- !u!114 &519420037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43920,13 +43928,9 @@ MonoBehaviour:
   Team: 0
   IsLeader: 0
   IsMinion: 0
-  Type: 0
-  IgnoreDamage: 0
-  IgnoreTeam: 0
   Detectable: 1
   WaitForTriggerToCommitDie: 0
   StartingHealth: 0
-  DamageBuffer: 0.1
   Resistances: []
   Weaknesses: []
   SpawnSfx: {fileID: 0}
@@ -43934,9 +43938,10 @@ MonoBehaviour:
   DeathVfx: {fileID: 725748389856807714, guid: 4bda94453d2ca7444a0fff05b2d425f5, type: 3}
   Health: 0
   ParentEntity: {fileID: 0}
-  ImmuneToDamage: 0
   IsGrouped: 0
   IsDead: 0
+  EnemiesDefeated: 0
+  DamageBufferExpireTime: 0
   OnSpawn:
     m_PersistentCalls:
       m_Calls: []
@@ -49976,19 +49981,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 791914785476824974, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: Team
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2212823366073748986, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.49
+      value: 5.47
       objectReference: {fileID: 0}
     - target: {fileID: 2212823366073748986, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0001001358
+      value: 0.089
       objectReference: {fileID: 0}
     - target: {fileID: 2212823366073748986, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -8.09
+      value: -7.85
       objectReference: {fileID: 0}
     - target: {fileID: 2212823366073748986, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -50021,6 +50026,10 @@ PrefabInstance:
     - target: {fileID: 8326201900535933638, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
       propertyPath: m_Name
       value: Building Character TEMPLATE
+      objectReference: {fileID: 0}
+    - target: {fileID: 8326201900535933638, guid: acf6079e59c3b754e9cb419ed67e299a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -89850,6 +89859,75 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1001 &8741254784431816893
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.93
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628655121731476764, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: IsLeader
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4628655121731476764, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: IsMinion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7128924457670672149, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7128924457670672149, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+    - target: {fileID: 7431477167458948457, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_Name
+      value: Playable Character Human Archer
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -89866,3 +89944,4 @@ SceneRoots:
   - {fileID: 1680903993}
   - {fileID: 1107678378}
   - {fileID: 68664830}
+  - {fileID: 8741254784431816893}

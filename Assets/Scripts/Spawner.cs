@@ -16,6 +16,9 @@ public class Spawner : MonoBehaviour {
     [SerializeField] [FoldoutGroup("Hooks")]
     private GameObject SpawnEffect;
 
+    [SerializeField] [FoldoutGroup("Settings")]
+    private EntityTeams SpawnTeam;
+    
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Maximum distance the player can be while the spawner still functions")]
     private float PlayerDistanceThreshold;
     
@@ -86,6 +89,7 @@ public class Spawner : MonoBehaviour {
             rY = flipY ? rY * -1 : rY;
             pos += new Vector3(rX, pos.y, rY);
             var entity = Pooler.Instance.SpawnObject(SpawnPool[r], pos).GetComponent<Entity>();
+            entity.Team = SpawnTeam;
             entity.OnDeath.AddListener(RemoveEntityFromList);
             if(SpawnEffect!=null)
                 Pooler.Instance.SpawnObject(SpawnEffect, pos);
@@ -103,6 +107,12 @@ public class Spawner : MonoBehaviour {
         SpawnedEntities.Remove(e);
         if (AvailableSpawns <= 0 && AvailableSpawns != -1 && DepleteOnLastDeath) {
             OnSpawnDepletion.Invoke();
+        }
+    }
+
+    public void KillAllSpawned(Entity killer) {
+        foreach (var entity in SpawnedEntities) {
+            entity.Die(killer);
         }
     }
 }

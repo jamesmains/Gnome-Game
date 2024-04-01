@@ -15,6 +15,7 @@ MonoBehaviour:
   WeaponName: 
   WeaponIcon: {fileID: 1653138028, guid: 7e48bdbce6d4978439016f041755bbee, type: 3}
   WeaponFireRate: {x: 0.5, y: 0.75}
+  AttackRange: 0.5
   WeaponBullet: {fileID: 1554896528621277258, guid: ac62b49e129115244893a3704e37dbd6, type: 3}
   WeaponDamageSources:
   - damageRange: {x: 2, y: 5}

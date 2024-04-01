@@ -11,50 +11,41 @@ public class Character : SerializedMonoBehaviour {
     protected float MinimumVelocityForAnimating = 0.15f;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    protected float InteractionRange;
-    
-    [SerializeField] [FoldoutGroup("Settings")]
-    public float AttackRange;
-    
-    [SerializeField] [FoldoutGroup("Settings")]
-    protected float RepelFromOthersRange;
-    
-    [SerializeField] [FoldoutGroup("Settings")]
     protected bool CanAttackWhileMoving = true;
-    
+
     [SerializeField] [FoldoutGroup("Settings")]
     protected bool CanAttackWhileNotMoving = true;
     
     [SerializeField] [FoldoutGroup("Hooks")]
-    public Entity SelfEntity;
-    
-    [SerializeField] [FoldoutGroup("Hooks")]
-    protected NavMeshAgent NavAgent;
-    
-    [SerializeField] [FoldoutGroup("Hooks")]
-    protected Weapon HeldWeapon;
-    
+    public Weapon HeldWeapon;
+
     [SerializeField] [FoldoutGroup("Hooks")]
     public Sprite CharacterSprite;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    protected NavMeshAgent NavAgent;
+
+    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    public Entity SelfEntity;
+
+    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
     public Rigidbody Rb;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
     protected Animator Anim;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected Vector3 TargetPosition;
-    
+
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected int FacingDirection = 1;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected bool IsLocked;
-    
+
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected float CachedScale;
-    
+
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public Entity FocussedEntity;
 
@@ -64,6 +55,7 @@ public class Character : SerializedMonoBehaviour {
         if (Rb == null) Rb = GetComponent<Rigidbody>();
         if (Anim == null) Anim = GetComponent<Animator>();
         if (SelfEntity == null) SelfEntity = GetComponent<Entity>();
+        if (NavAgent == null) NavAgent = GetComponent<NavMeshAgent>();
         CachedScale = transform.localScale.x;
         NavAgent.updatePosition = false;
         NavAgent.stoppingDistance = 0;
@@ -74,24 +66,22 @@ public class Character : SerializedMonoBehaviour {
 
     protected virtual void OnDisable() {
     }
-    
+
     protected virtual void Update() {
-        
     }
-    
+
     protected virtual void FixedUpdate() {
         if (IsLocked) return;
         HandleMovement();
         HandleLookDirection();
         HandleAnimation();
     }
-    
+
     public virtual void ToggleLock(bool state) {
         IsLocked = state;
     }
 
     protected virtual void HandleMovement() {
-        
     }
 
     protected virtual void HandleLookDirection() {
@@ -100,7 +90,7 @@ public class Character : SerializedMonoBehaviour {
         var shouldFaceTarget = Mathf.Abs(TargetPosition.x - transform.position.x) > MinimumVelocityForAnimating;
         var targetDirection = TargetPosition.x - transform.position.x;
         targetDirection = targetDirection > 0 ? -1 : 1;
-        FacingDirection = shouldFaceTarget ? (int)targetDirection : FacingDirection;
+        FacingDirection = shouldFaceTarget ? (int) targetDirection : FacingDirection;
         var scale = transform.localScale;
         var targetScale = scale;
         targetScale.x = FacingDirection * CachedScale;

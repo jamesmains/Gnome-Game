@@ -28,6 +28,9 @@ public class Item : SerializedScriptableObject {
     [FoldoutGroup("Settings")] [Title("Buy,Sell")] [SerializeField]
     public Vector2 Value;
 
+    [SerializeField] [FoldoutGroup("Settings")]
+    public List<ItemEffect> ItemEffects = new();
+    
     [FoldoutGroup("Settings")] [SerializeField]
     public bool IsConsumable;
 
@@ -36,10 +39,7 @@ public class Item : SerializedScriptableObject {
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent OnPickupItem = new();
-
-    [SerializeField] [FoldoutGroup("Settings")]
-    public List<ItemEffect> ItemEffects = new();
-
+    
     [SerializeField] [FoldoutGroup("Settings")]
     public int StackLimit = 999;
 }

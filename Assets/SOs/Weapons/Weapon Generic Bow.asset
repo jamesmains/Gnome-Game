@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b6db14afda2fe4384a9e8fd1e7d82a, type: 3}
+  m_Name: Weapon Generic Bow
+  m_EditorClassIdentifier: 
+  WeaponName: 
+  WeaponIcon: {fileID: 1488971392, guid: 7e48bdbce6d4978439016f041755bbee, type: 3}
+  WeaponFireRate: {x: 1, y: 1.25}
+  WeaponBullet: {fileID: 5675946323038070197, guid: 0634b4dbf7dd1784eafce692d8a69db3, type: 3}
+  WeaponDamageSources:
+  - damageRange: {x: 4, y: 7}
+    damageType: 0
+  AssignToWeilder: 1
+  AssignToWeilderTeam: 1

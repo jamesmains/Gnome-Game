@@ -25,18 +25,6 @@ public class InventoryWindow : MonoBehaviour,IPointerEnterHandler,IPointerExitHa
     public static InventoryWindow HighlightedInventoryWindow;
     public static readonly List<InventoryWindow> OpenInventoryWindows = new();
 
-    // protected void OnEnable()
-    // {
-    //     GameEvents.OnPickupItem += UpdateInventoryDisplay;
-    //     GameEvents.OnMoveOrAddItem += UpdateInventoryDisplay;
-    // }
-    //
-    // protected void OnDisable()
-    // {
-    //     GameEvents.OnPickupItem -= UpdateInventoryDisplay;
-    //     GameEvents.OnMoveOrAddItem -= UpdateInventoryDisplay;
-    // }
-
     public void Show()
     {
         UpdateInventoryDisplay();

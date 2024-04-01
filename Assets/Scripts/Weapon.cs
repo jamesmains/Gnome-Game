@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour {
     
     [SerializeField] [FoldoutGroup("Settings")]
-    protected WeaponSettings Settings;
+    public WeaponSettings Settings;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected Transform BulletOrigin;
