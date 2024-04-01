@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour {
     
     [SerializeField] [FoldoutGroup("Settings")]
-    protected Vector2 FireRate;
+    protected WeaponSettings Settings;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected Transform BulletOrigin;
@@ -28,7 +28,7 @@ public abstract class Weapon : MonoBehaviour {
 
     protected virtual void CommitAttack(Transform Origin) {
         BulletOrigin = Origin;
-        fireRateRechargeTimer = Random.Range(FireRate.x,FireRate.y);
+        fireRateRechargeTimer = Random.Range(Settings.WeaponFireRate.x,Settings.WeaponFireRate.y);
     }
 
     protected virtual bool CanFire() {

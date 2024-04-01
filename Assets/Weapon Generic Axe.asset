@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b6db14afda2fe4384a9e8fd1e7d82a, type: 3}
+  m_Name: Weapon Generic Axe
+  m_EditorClassIdentifier: 
+  WeaponName: 
+  WeaponIcon: {fileID: 1653138028, guid: 7e48bdbce6d4978439016f041755bbee, type: 3}
+  WeaponFireRate: {x: 0.5, y: 0.75}
+  WeaponBullet: {fileID: 1554896528621277258, guid: ac62b49e129115244893a3704e37dbd6, type: 3}
+  WeaponDamageSources:
+  - damageRange: {x: 2, y: 5}
+    damageType: 0
+  AssignToWeilder: 1
+  AssignToWeilderTeam: 1

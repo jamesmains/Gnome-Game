@@ -20,7 +20,7 @@ public class EntityDamageSourceVolume : Entity {
     private LayerMask IgnoredLayers;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    private List<DamageSource> DamageSources = new();
+    public List<DamageSource> DamageSources = new();
 
     private void OnTriggerEnter(Collider other) {
         if (!TriggerOnEntry) return;

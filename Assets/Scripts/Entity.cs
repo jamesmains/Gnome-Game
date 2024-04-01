@@ -9,6 +9,12 @@ using UnityEngine.Events;
 public class Entity : MonoBehaviour, IDamageable, IKillable {
     [SerializeField] [FoldoutGroup("Settings")]
     public EntityTeams Team;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    public bool IsLeader;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    public bool IsMinion;
 
     [SerializeField] [FoldoutGroup("Settings")]
     public EntityType Type;
@@ -38,13 +44,16 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     protected List<DamageTypeModifier> Weaknesses;
 
     [SerializeField] [FoldoutGroup("Hooks")]
+    protected AudioClip SpawnSfx;
+    
+    [SerializeField] [FoldoutGroup("Hooks")]
     protected GameObject HurtVfx;
 
     [SerializeField] [FoldoutGroup("Hooks")]
     protected GameObject DeathVfx;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    protected int Health;
+    public int Health;
     
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected Entity ParentEntity;
@@ -53,11 +62,14 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     protected bool ImmuneToDamage;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    public bool IsGrouped;
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public bool IsDead;
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent OnSpawn = new();
-    
+
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent<Entity, Entity> OnHit = new(); // Self, Attacker -- Damage Applied NOT required
 
@@ -66,14 +78,12 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent<Entity> OnDeath = new();
-
-    private static List<Entity> AllEntities = new();
-
-    private const int EntityLayer = ~ 6; // *shrug* idk either
     
+    private static List<Entity> AllEntities = new();
+    private const int EntityLayer = ~ 6; // *shrug* idk either
+
     protected virtual void OnEnable() {
         AllEntities.Add(this);
-
         Spawn();
     }
 
@@ -94,6 +104,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         IsDead = false;
         Health = StartingHealth;
         ImmuneToDamage = false;
+        AudioManager.OnPlayClip.Invoke(SpawnSfx);
     }
 
     public void SetParentEntity(Entity entity) {
@@ -104,13 +115,19 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         Team = team;
     }
 
-    public Entity FindNearestAlly() {
-        return AllEntities.Where(o => o.Team == Team && o != this && o.Detectable)
+    public Entity FindNearestAlly(bool seekMinion = false) {
+        if (seekMinion) return FindNearestMinion();
+        else return AllEntities.Where(o => o.Team == Team && o != this && o.Detectable)
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
-    public Entity FindNearestEnemy() {
-        return AllEntities.Where(o => o.Team != Team && o != this && o.Detectable)
+    private Entity FindNearestMinion() {
+        return AllEntities.Where(o => o.Team == Team && o != this && o.Detectable && o.IsMinion && !o.IsGrouped)
+            .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
+    }
+
+    public Entity FindNearestEnemy(Entity filter = null) {
+        return AllEntities.Where(o => o.Team != Team && o != this && o.Detectable && o != filter)
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 

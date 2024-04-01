@@ -3,15 +3,6 @@ using UnityEngine;
 
 public class WeaponWithProjectile : Weapon {
 
-    [SerializeField] [FoldoutGroup("Settings")]
-    private bool AssignToWeilder = true;
-    
-    [SerializeField] [FoldoutGroup("Settings")]
-    private bool AssignToWeilderTeam = true;
-    
-    [SerializeField] [FoldoutGroup("Hooks")]
-    private GameObject BulletObject;
-
     public override void Fire(Transform Origin) {
         if (!CanFire()) return;
         base.Fire(Origin);
@@ -28,14 +19,16 @@ public class WeaponWithProjectile : Weapon {
     }
 
     private GameObject LaunchProjectile(Vector3 dir) {
-        var spawnedBullet = Pooler.Instance.SpawnObject(BulletObject, BulletOrigin.position);
+        var spawnedBullet = Pooler.Instance.SpawnObject(Settings.WeaponBullet, BulletOrigin.position);
         var projectile = spawnedBullet.GetComponentInChildren<Projectile>();
+        if(Settings.WeaponDamageSources != null)
+            spawnedBullet.GetComponentInChildren<EntityDamageSourceVolume>().DamageSources = Settings.WeaponDamageSources;
         if(projectile != null) projectile.SetDirection(dir);
         return spawnedBullet;
     }
 
     private void AttachProjectile(Entity entity) {
-        if(AssignToWeilder) entity.SetParentEntity(WieldingEntity);
-        if(AssignToWeilderTeam) entity.SetTeam(WieldingEntity.Team);
+        if(Settings.AssignToWeilder) entity.SetParentEntity(WieldingEntity);
+        if(Settings.AssignToWeilderTeam) entity.SetTeam(WieldingEntity.Team);
     }
 }

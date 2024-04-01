@@ -57,6 +57,7 @@ public class Spawner : MonoBehaviour {
     }
 
     private void Update() {
+        if (PlayerCharacter.CurrentCharacter == null) return;
         var PlayerIsOutOfRange = Vector3.Distance(SpawnPoint.position, PlayerCharacter.CurrentCharacter.transform.position) >
                        PlayerDistanceThreshold;
         if (PlayerIsOutOfRange) return;

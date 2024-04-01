@@ -11,7 +11,10 @@ public class Character : SerializedMonoBehaviour {
     protected float MinimumVelocityForAnimating = 0.15f;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    protected float IdealInteractionRange;
+    protected float InteractionRange;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    public float AttackRange;
     
     [SerializeField] [FoldoutGroup("Settings")]
     protected float RepelFromOthersRange;
@@ -23,7 +26,7 @@ public class Character : SerializedMonoBehaviour {
     protected bool CanAttackWhileNotMoving = true;
     
     [SerializeField] [FoldoutGroup("Hooks")]
-    protected Entity SelfEntity;
+    public Entity SelfEntity;
     
     [SerializeField] [FoldoutGroup("Hooks")]
     protected NavMeshAgent NavAgent;
@@ -51,6 +54,9 @@ public class Character : SerializedMonoBehaviour {
     
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected float CachedScale;
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    public Entity FocussedEntity;
 
     protected static readonly int IsMoving = Animator.StringToHash("IsMoving");
 
@@ -60,6 +66,7 @@ public class Character : SerializedMonoBehaviour {
         if (SelfEntity == null) SelfEntity = GetComponent<Entity>();
         CachedScale = transform.localScale.x;
         NavAgent.updatePosition = false;
+        NavAgent.stoppingDistance = 0;
     }
 
     protected virtual void OnEnable() {

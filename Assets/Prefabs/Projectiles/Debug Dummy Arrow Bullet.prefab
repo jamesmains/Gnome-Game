@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3376496957400951394
 Transform:
   m_ObjectHideFlags: 0
@@ -52,23 +52,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Team: 0
+  IsLeader: 0
+  IsMinion: 0
   Type: 0
   IgnoreDamage: 0
   IgnoreTeam: 0
   Detectable: 0
   WaitForTriggerToCommitDie: 0
-  MaxHealth: 1
-  Health: 0
-  StartAtMaxHealth: 1
+  StartingHealth: 0
   DamageBuffer: 0.1
   Resistances: []
   Weaknesses: []
+  SpawnSfx: {fileID: 8300000, guid: 5677f42e1abe3db40bea3d0fa1682562, type: 3}
   HurtVfx: {fileID: 0}
   DeathVfx: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
+  Health: 0
   ParentEntity: {fileID: 0}
   ImmuneToDamage: 0
+  IsGrouped: 0
   IsDead: 0
   OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
     m_PersistentCalls:
       m_Calls: []
   OnTakeDamage:

@@ -62,7 +62,7 @@ public class Pooler : MonoBehaviour {
     private IEnumerator SpawnObjects(PooledObject poolObj, bool init = false) {
         var amountToSpawn = init ? poolObj.initialAmount : poolObj.increaseBoundsAmount;
         while (amountToSpawn > 0) {
-            var obj = Instantiate(poolObj.pooledObject, poolObj.poolContent);
+            var obj = Instantiate(poolObj.GetPooledObject(), poolObj.poolContent);
             poolObj.spawnedObjects.Add(obj);
             obj.SetActive(false);
             amountToSpawn--;
@@ -85,4 +85,9 @@ public class PooledObject {
     public int initialAmount;
     public int increaseBoundsAmount;
     public List<GameObject> spawnedObjects = new();
+
+    public GameObject GetPooledObject() {
+        pooledObject.SetActive(false);
+        return pooledObject;
+    }
 }

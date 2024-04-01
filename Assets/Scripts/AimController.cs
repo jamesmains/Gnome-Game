@@ -41,7 +41,7 @@ public class AimController : MonoBehaviour {
     }
 
     private void Update() {
-
+        if (PlayerCharacter.CurrentCharacter == null) return;
         var playerPosition = PlayerCharacter.CurrentCharacter.transform.position;
         if (CachedMousePosition == Input.mousePosition && CachedPlayerPosition == playerPosition) return;
         CachedMousePosition = Input.mousePosition;
@@ -49,7 +49,9 @@ public class AimController : MonoBehaviour {
         
         var ray = Cam.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out var hit, 100,GroundLayer)) return;
-        TargetPosition = hit.point;
+        var dir = hit.point - playerPosition;
+        var range = Vector3.ClampMagnitude(dir, PlayerCharacter.CurrentCharacter.AttackRange);
+        TargetPosition = playerPosition + range;
     }
 
     private void FixedUpdate() {

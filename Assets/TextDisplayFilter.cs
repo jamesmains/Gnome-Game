@@ -20,16 +20,15 @@ public class TextDisplayFilter : MonoBehaviour {
     private void ValidateText() {
         string s = "";
         index = 0;
-        TextDisplay.text = s;
         foreach (var c in RawText) {
-            if (index >= LineLimit) {
-                if (c != ' ') {
-                    s += c; 
+            if (index >= LineLimit || (int)c == 10) {
+                if (c == ' ' || (int)c == 10) {
+                    s += "<br>";
+                    index = 0;
                     continue;
                 }
                 else {
-                    s += "<br>";
-                    index = 0;
+                    s += c; 
                     continue;
                 }
             }
