@@ -4,10 +4,10 @@ using UnityEngine.Events;
 
 public class PlayerCharacter : Character {
     [SerializeField] [FoldoutGroup("Settings")]
-    private float TetherDistance;
+    private float TetherDistance = 1f;
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Furthest the minion can get away from the Leader")]
-    private float LeashDistance;
+    private float LeashDistance = 5f;
 
     [SerializeField] [FoldoutGroup("Hooks")]
     private Transform NonPcWeaponBulletOrigin;
@@ -41,6 +41,7 @@ public class PlayerCharacter : Character {
     }
 
     protected virtual void HandleInputs() {
+        if (SelfEntity.IsDead) return;
         if (CurrentCharacter == this) {
             HandlePlayerControlledInputs();
         }
@@ -50,7 +51,7 @@ public class PlayerCharacter : Character {
     }
 
     protected virtual void HandlePlayerControlledInputs() {
-        if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI)
+        if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI && HeldWeapon != null && HeldWeapon.Settings != null)
             HeldWeapon.Fire(AimController.PlayerAim.BulletSpawnPoint);
 
         playerInput.x = Input.GetAxisRaw("Horizontal");
@@ -60,13 +61,13 @@ public class PlayerCharacter : Character {
     protected virtual void HandleComputerControlledInputs() {
         if (FocussedEntity == null) return;
         float v = NavAgent.velocity.sqrMagnitude;
+        if (HeldWeapon == null || HeldWeapon.Settings == null) return;
         bool canAttack = (v != 0 && CanAttackWhileMoving) ||
                          (v == 0 && CanAttackWhileNotMoving);
         canAttack = canAttack && SelfEntity.CanSeeEntity(FocussedEntity) &&
                     SelfEntity.WithinReachOfEntity(FocussedEntity, HeldWeapon.Settings.AttackRange);
         if (!canAttack) return;
         var dest = FocussedEntity.transform.position;
-        dest.y = NonPcWeaponBulletOrigin.position.y;
         HeldWeapon.FireTowards(NonPcWeaponBulletOrigin, dest);
     }
     
@@ -82,7 +83,7 @@ public class PlayerCharacter : Character {
             HandleComputerMovement();
         }
         
-        if (NavAgent.isStopped) return;
+        if (NavAgent.isStopped && this != CurrentCharacter) return;
         transform.position =
             Vector3.MoveTowards(transform.position, NavAgent.nextPosition, Time.deltaTime * NavAgent.speed);
     }
@@ -101,17 +102,13 @@ public class PlayerCharacter : Character {
     private void HandlePlayerMovement() {
         var thisPosition = transform.position;
 
-        TargetPosition = thisPosition + playerInput.normalized;
-
-        var dist = Vector3.Distance(thisPosition, TargetPosition);
-        NavAgent.isStopped = (dist < 0.01f);
+        TargetPosition = thisPosition + playerInput.normalized / 2;
         if (NavAgent.destination != TargetPosition)
             NavAgent.SetDestination(TargetPosition);
     }
 
     private void HandleComputerMovement() {
         var thisPosition = transform.position;
-        float maximumDistance;
 
         if (Leader != null && !SelfEntity.IsLeader) {
             FocussedEntity = Leader == CurrentCharacter ? SelfEntity.FindNearestEnemy() : Leader.FocussedEntity;
@@ -121,10 +118,8 @@ public class PlayerCharacter : Character {
             TargetPosition = needsToMoveToFocusTarget
                 ? FocussedEntity.transform.position
                 : Leader.transform.position;
-            maximumDistance = needsToMoveToFocusTarget ? HeldWeapon.Settings.AttackRange : TetherDistance;
             var targetPositionOverride = Vector3.Distance(Leader.transform.position, TargetPosition) > LeashDistance;
             if (targetPositionOverride) {
-                maximumDistance = TetherDistance;
                 TargetPosition = Leader.transform.position;
                 FocussedEntity = null;
             }
@@ -136,14 +131,13 @@ public class PlayerCharacter : Character {
                 LastFoccussedEntity = FocussedEntity = SelfEntity.FindNearestEnemy(LastFoccussedEntity);
             }
 
-            TargetPosition = FocussedEntity ? FocussedEntity.transform.position : transform.position;
-            maximumDistance = FocussedEntity ? HeldWeapon.Settings.AttackRange : 0;
+            TargetPosition = FocussedEntity ? FocussedEntity.transform.position : thisPosition;
         }
 
-        var dist = Vector3.Distance(thisPosition, TargetPosition);
-        NavAgent.isStopped = (dist < maximumDistance);
-        if (NavAgent.destination != TargetPosition)
-            NavAgent.SetDestination(TargetPosition);
+        var dir = (TargetPosition - thisPosition).normalized * TetherDistance;
+        
+        TargetPosition -= dir;
+        NavAgent.SetDestination(TargetPosition);
     }
 
     public void AssignLeader(Character newLeader) {
@@ -158,8 +152,9 @@ public class PlayerCharacter : Character {
 
     [Button]
     public void Possess() {
-        if (CurrentCharacter != null)
+        if (CurrentCharacter != null) {
             CurrentCharacter.TargetPosition = CurrentCharacter.transform.position;
+        }
         CurrentCharacter = this;
         OnPlayerCharacterPossession.Invoke(this);
     }

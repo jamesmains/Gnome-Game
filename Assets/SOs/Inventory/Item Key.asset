@@ -33,7 +33,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  Icon: {fileID: 0}
+  Icon: {fileID: -801563507, guid: 5de5cbe1e33a51e4aabaa1f7bca7ca1e, type: 3}
   Name: 
   Description: 
   ItemType: 0

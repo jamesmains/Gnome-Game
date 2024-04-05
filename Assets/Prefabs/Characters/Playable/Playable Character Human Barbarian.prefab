@@ -60,6 +60,14 @@ PrefabInstance:
       propertyPath: BulletObject
       value: 
       objectReference: {fileID: 1554896528621277258, guid: ac62b49e129115244893a3704e37dbd6, type: 3}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: IsLeader
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264550934146278594, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
       propertyPath: AttackRange
       value: 0.5

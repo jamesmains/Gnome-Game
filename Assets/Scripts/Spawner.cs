@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +19,12 @@ public class Spawner : MonoBehaviour {
 
     [SerializeField] [FoldoutGroup("Settings")]
     private EntityTeams SpawnTeam;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private bool PossesOnSpawn;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private bool RemoveFromPoolOnSpawn;
     
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Maximum distance the player can be while the spawner still functions")]
     private float PlayerDistanceThreshold;
@@ -50,6 +57,9 @@ public class Spawner : MonoBehaviour {
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     private float TimeUntilNextSpawn;
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    private List<GameObject> UsedSpawnPool;
 
     [SerializeField] [FoldoutGroup("Events")]
     private UnityEvent OnSpawnDepletion;
@@ -71,15 +81,18 @@ public class Spawner : MonoBehaviour {
         else Spawn();
     }
 
-    private void Spawn() {
+    public void Spawn() {
         int groupCount = Random.Range(0, MaxGroupCount + 1);
         int maxAvailableSpawns = SpawnLimit > AvailableSpawns ? SpawnLimit : AvailableSpawns;
         groupCount = Mathf.Clamp(groupCount, 0, maxAvailableSpawns);
 
-        AvailableSpawns -= groupCount;
-
+        if(AvailableSpawns > 0)
+            AvailableSpawns -= groupCount;
+        
+        var ValidSpawnPool = SpawnPool.Where(o => !UsedSpawnPool.Contains(o)).ToList();
+        if (ValidSpawnPool.Count <= 0) return;
         for (int i = 0; i < groupCount; i++) {
-            int r = Random.Range((int) 0, (int) SpawnPool.Count);
+            int r = Random.Range((int) 0, (int) ValidSpawnPool.Count);
             var pos = SpawnPoint.position;
             var rX = Random.Range(SpawnRange.x, SpawnRange.y);
             var rY = Random.Range(SpawnRange.x, SpawnRange.y);
@@ -88,9 +101,14 @@ public class Spawner : MonoBehaviour {
             rX = flipX ? rX * -1 : rX;
             rY = flipY ? rY * -1 : rY;
             pos += new Vector3(rX, pos.y, rY);
-            var entity = Pooler.Instance.SpawnObject(SpawnPool[r], pos).GetComponent<Entity>();
+            var entity = Pooler.Instance.SpawnObject(ValidSpawnPool[r], pos).GetComponent<Entity>();
             entity.Team = SpawnTeam;
             entity.OnDeath.AddListener(RemoveEntityFromList);
+            if(PossesOnSpawn)
+                entity.GetComponent<PlayerCharacter>().Possess();
+            if (RemoveFromPoolOnSpawn) {
+                UsedSpawnPool.Add(ValidSpawnPool[r]);
+            }
             if(SpawnEffect!=null)
                 Pooler.Instance.SpawnObject(SpawnEffect, pos);
             SpawnedEntities.Add(entity);
@@ -114,5 +132,9 @@ public class Spawner : MonoBehaviour {
         foreach (var entity in SpawnedEntities) {
             entity.Die(killer);
         }
+    }
+
+    public void ResetPool() {
+        UsedSpawnPool.Clear();
     }
 }

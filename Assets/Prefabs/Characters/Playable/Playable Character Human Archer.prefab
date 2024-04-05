@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: Settings
       value: 
       objectReference: {fileID: 11400000, guid: ee3f4a16707cf3941bc8074a25a1b728, type: 2}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: IsLeader
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
       propertyPath: MoveSpeed
       value: 0
@@ -62,11 +66,11 @@ PrefabInstance:
       objectReference: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
     - target: {fileID: 8036281465405216601, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
       propertyPath: m_Name
-      value: Playable Character Human Archer Variant
+      value: Playable Character Human Archer
       objectReference: {fileID: 0}
     - target: {fileID: 8036281465405216601, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

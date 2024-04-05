@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &9222122361368168654
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.115821
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00000011920929
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.7383869
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975432244908371947, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2425146870382818353, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1a93fb8e604459342b9d6e1634c3e6cc, type: 3}
+    - target: {fileID: 4840971501673956062, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: Settings
+      value: 
+      objectReference: {fileID: 11400000, guid: ee3f4a16707cf3941bc8074a25a1b728, type: 2}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: Team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: IsLeader
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: IsMinion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231840508669681452, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: StartingHealth
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+    - target: {fileID: 8036281465405216601, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_Name
+      value: Playable Character Skeleton Archer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8036281465405216601, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 943ec5241fd390b489440aba583a8a82, type: 3}

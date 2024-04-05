@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class EntityDamageSourceVolume : Entity {
-    [SerializeField] [FoldoutGroup("Settings")]
+    [Title("Volume Settings")][SerializeField] [FoldoutGroup("Settings")]
     private bool TriggerOnEntry = true;
 
     [SerializeField] [FoldoutGroup("Settings")]
@@ -16,6 +16,9 @@ public class EntityDamageSourceVolume : Entity {
     [SerializeField] [FoldoutGroup("Settings")]
     private bool IgnoreFriendlies;
 
+    [SerializeField] [FoldoutGroup("Settings")]
+    private bool DamageSelfOnProcessHit;
+    
     [SerializeField] [FoldoutGroup("Settings")]
     private LayerMask IgnoredLayers;
 
@@ -49,10 +52,14 @@ public class EntityDamageSourceVolume : Entity {
             entity.OnHit.Invoke(entity,null);
             if (!entity.Detectable) return;
             entity.TakeDamage(DamageSources, hitPoint, ParentEntity);
+            if (Health == -1 || !DamageSelfOnProcessHit) return;
+            TakeDamage(1,transform.position);
         }
 
-        if (Health == -1) return;
-        Health -= 1;
-        if (Health <= 0) Die(null);
+        else {
+            if (Health == -1 || !DamageSelfOnProcessHit) return;
+            Die(null);
+        }
+        
     }
 }

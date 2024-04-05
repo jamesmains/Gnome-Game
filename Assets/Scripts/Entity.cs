@@ -7,23 +7,26 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class Entity : MonoBehaviour, IDamageable, IKillable {
-    [SerializeField] [FoldoutGroup("Settings")]
+    [Title("Entity Settings")] [SerializeField] [FoldoutGroup("Settings")]
     public EntityTeams Team;
 
     [SerializeField] [FoldoutGroup("Settings")]
     public bool IsLeader;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    public bool IsMinion;
-
-    [SerializeField] [FoldoutGroup("Settings")]
     public bool Detectable = true;
 
+    [SerializeField] [FoldoutGroup("Settings")]
+    public bool Searchable = true;
+
+    [SerializeField] [FoldoutGroup("Settings")]
+    public bool WaitForTriggerToCommitSpawn;
+    
     [SerializeField] [FoldoutGroup("Settings")]
     public bool WaitForTriggerToCommitDie;
 
     [SerializeField] [FoldoutGroup("Settings")] [Range(-1, 999)]
-    protected int StartingHealth;
+    public int StartingHealth = 10;
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Takes off a percentage of the damage")]
     protected List<DamageTypeModifier> Resistances;
@@ -32,22 +35,22 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     protected List<DamageTypeModifier> Weaknesses;
 
     [SerializeField] [FoldoutGroup("Hooks")]
-    protected AudioClip SpawnSfx;
+    protected Transform SightLine;
 
     [SerializeField] [FoldoutGroup("Hooks")]
-    protected GameObject HurtVfx;
+    protected SpawnableEffect SpawnEffects;
 
     [SerializeField] [FoldoutGroup("Hooks")]
-    protected GameObject DeathVfx;
+    protected SpawnableEffect HurtEffects;
+
+    [SerializeField] [FoldoutGroup("Hooks")]
+    protected SpawnableEffect DeathEffects;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public int Health;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     protected Entity ParentEntity;
-
-    // [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    // protected bool ImmuneToDamage;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public bool IsGrouped;
@@ -58,11 +61,8 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public int EnemiesDefeated;
 
-    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private float DamageBufferExpireTime;
-
     [SerializeField] [FoldoutGroup("Events")]
-    public UnityEvent OnSpawn = new();
+    public UnityEvent<Entity> OnSpawn = new();
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent<Entity, Entity> OnHit = new(); // Self, Attacker -- Damage Applied NOT required
@@ -75,7 +75,6 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     private static List<Entity> AllEntities = new();
     private const int EntityLayer = ~ 6; // *shrug* idk either
-    private const float DamageBuffer = 0.1f;
 
     protected virtual void OnEnable() {
         AllEntities.Add(this);
@@ -92,14 +91,6 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     protected virtual void FixedUpdate() {
     }
 
-    private void Spawn() {
-        OnSpawn.Invoke();
-        IsDead = false;
-        Health = StartingHealth;
-        // ImmuneToDamage = false;
-        AudioManager.OnPlayClip.Invoke(SpawnSfx);
-    }
-
     public void SetParentEntity(Entity entity) {
         ParentEntity = entity;
     }
@@ -108,21 +99,26 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         Team = team;
     }
 
+    public Entity FindNearestEntity(float maxDistance = Mathf.Infinity) {
+        return AllEntities.Where(o => o.Searchable && WithinReachOfEntity(o, maxDistance))
+            .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
+    }
+
     public Entity FindNearestAlly(bool seekMinion = false, float maxDistance = Mathf.Infinity) {
         return AllEntities.Where(o =>
-                o.Team == Team && o != this && o.Detectable && WithinReachOfEntity(o, maxDistance) &&
-                (!seekMinion || o.IsMinion && !o.IsGrouped))
+                o.Team == Team && o != this && o.Searchable && WithinReachOfEntity(o, maxDistance) &&
+                (!seekMinion || !o.IsLeader && !o.IsGrouped))
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
     public Entity FindNearestEnemy(Entity filter = null) {
-        return AllEntities.Where(o => o.Team != Team && o != this && o.Detectable && o != filter)
+        return AllEntities.Where(o => o.Team != Team && o != this && o.Searchable && o != filter)
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
     public bool CanSeeEntity(Entity targetEntity) {
-        var targetDirection = targetEntity.transform.position - transform.position;
-        if (!Physics.Raycast(transform.position, targetDirection, out var hit,
+        var targetDirection = targetEntity.transform.position - SightLine.position;
+        if (!Physics.Raycast(SightLine.position, targetDirection, out var hit,
                 Mathf.Infinity, EntityLayer)) return false;
         hit.collider.gameObject.TryGetComponent<Entity>(out var e);
         if (e == null) return false;
@@ -135,11 +131,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     public virtual bool TakeDamage(List<DamageSource> damageSources, Vector3 hitPoint, Entity attacker = null,
         bool canHarmAttacker = false) {
-        if (Time.time < DamageBufferExpireTime) return false;
         if (attacker != null && attacker == this && !canHarmAttacker) return false;
-
-        if (this.gameObject.activeSelf)
-            DamageBufferExpireTime = Time.time + DamageBuffer;
 
         var dmg = 0;
         foreach (var source in damageSources) {
@@ -170,12 +162,33 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         dmg = (int) Mathf.Clamp(dmg, 0, Mathf.Infinity);
         Health -= dmg;
         if (Health <= 0) Die(attacker);
-        Pooler.Instance.SpawnObject(HurtVfx,
-            transform.position);
+        HurtEffects.PlayEffect(transform.position);
         OnTakeDamage.Invoke(this, attacker);
         return true;
     }
 
+    public virtual bool TakeDamage(int damage, Vector3 hitPoint, Entity attacker = null,
+        bool canHarmAttacker = false) {
+        if (attacker != null && attacker == this && !canHarmAttacker) return false;
+        Health -= damage;
+        if (Health <= 0) Die(attacker);
+        HurtEffects.PlayEffect(transform.position);
+        OnTakeDamage.Invoke(this, attacker);
+        return true;
+    }
+
+    protected virtual void Spawn() {
+        IsDead = false;
+        Health = StartingHealth;
+        OnSpawn.Invoke(this);
+        if (WaitForTriggerToCommitSpawn) return;
+        CommitSpawn();
+    }
+
+    public virtual void CommitSpawn() {
+        SpawnEffects.PlayEffect(transform.position);
+    }
+    
     public virtual void Die(Entity killer) {
         if (IsDead) return;
         if (killer != null)
@@ -187,7 +200,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     }
 
     public virtual void CommitDie() {
-        Pooler.Instance.SpawnObject(DeathVfx, transform.position);
+        DeathEffects.PlayEffect(transform.position);
         gameObject.SetActive(false);
     }
 }

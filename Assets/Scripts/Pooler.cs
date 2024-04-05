@@ -25,13 +25,14 @@ public class Pooler : MonoBehaviour {
     }
 
     public GameObject SpawnObject(GameObject targetObject, Vector3 spawnLocation) {
-        var pool = pooledObjects.FirstOrDefault(o => o.pooledObject == targetObject);
-        var obj = pool?.spawnedObjects.FirstOrDefault(o => o.activeSelf == false);
-
+        
         if (targetObject == null) {
             Debug.Log($"NOTE: Tried to spawn a non-existent object! Oops!");
             return null;
         }
+        
+        var pool = pooledObjects.FirstOrDefault(o => o.pooledObject == targetObject);
+        var obj = pool?.spawnedObjects.FirstOrDefault(o => o.activeSelf == false);
         
         if (pool == null) {
             

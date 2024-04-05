@@ -18,7 +18,7 @@ MonoBehaviour:
   AttackRange: 0.5
   WeaponBullet: {fileID: 1554896528621277258, guid: ac62b49e129115244893a3704e37dbd6, type: 3}
   WeaponDamageSources:
-  - damageRange: {x: 2, y: 5}
+  - damageRange: {x: 1, y: 2}
     damageType: 0
   AssignToWeilder: 1
   AssignToWeilderTeam: 1

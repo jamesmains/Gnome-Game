@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Character : SerializedMonoBehaviour {
+public class Character : MonoBehaviour {
     [SerializeField] [FoldoutGroup("Settings")]
     protected float ResizeSpeed = 5;
 
@@ -54,11 +54,12 @@ public class Character : SerializedMonoBehaviour {
     protected virtual void Awake() {
         if (Rb == null) Rb = GetComponent<Rigidbody>();
         if (Anim == null) Anim = GetComponent<Animator>();
+        Anim.speed = Anim.speed / transform.localScale.x; // interesting idea to slow the speed of animations down by the scale of the character...
+        Anim.speed = Mathf.Clamp(Anim.speed, 0.35f, 1f);
         if (SelfEntity == null) SelfEntity = GetComponent<Entity>();
         if (NavAgent == null) NavAgent = GetComponent<NavMeshAgent>();
         CachedScale = transform.localScale.x;
         NavAgent.updatePosition = false;
-        NavAgent.stoppingDistance = 0;
     }
 
     protected virtual void OnEnable() {
@@ -99,7 +100,7 @@ public class Character : SerializedMonoBehaviour {
     }
 
     protected virtual void HandleAnimation() {
-        var isMoving = NavAgent.velocity.sqrMagnitude > 0;
+        var isMoving = (Vector3.Distance(transform.position, NavAgent.destination) > 0.2f);
         Anim.SetBool(IsMoving, isMoving);
     }
 }

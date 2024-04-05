@@ -51,7 +51,10 @@ public class AimController : MonoBehaviour {
         var ray = Cam.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out var hit, 100, GroundLayer)) return;
         var dir = hit.point - playerPosition;
-        var range = Vector3.ClampMagnitude(dir, PlayerCharacter.CurrentCharacter.HeldWeapon.Settings.AttackRange);
+        var heldWeapon = PlayerCharacter.CurrentCharacter.HeldWeapon;
+        var attackRange = heldWeapon == null ? 0.5f :
+            heldWeapon.Settings == null ? 0.5f : heldWeapon.Settings.AttackRange;
+        var range = Vector3.ClampMagnitude(dir, attackRange);
         TargetPosition = playerPosition + range;
     }
 
