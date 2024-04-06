@@ -14960,6 +14960,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
+      propertyPath: CharacterSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4968b180b0c87ca4693affdddadc1de0, type: 3}
+    - target: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 7658500290581396773, guid: 943ec5241fd390b489440aba583a8a82, type: 3}

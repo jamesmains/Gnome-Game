@@ -21,7 +21,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     [SerializeField] [FoldoutGroup("Settings")]
     public bool WaitForTriggerToCommitSpawn;
-    
+
     [SerializeField] [FoldoutGroup("Settings")]
     public bool WaitForTriggerToCommitDie;
 
@@ -99,30 +99,50 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         Team = team;
     }
 
-    public Entity FindNearestEntity(float maxDistance = Mathf.Infinity) {
-        return AllEntities.Where(o => o.Searchable && WithinReachOfEntity(o, maxDistance))
+    public Entity FindNearestEntity(List<Entity> filter = null, float maxDistance = Mathf.Infinity) {
+        filter ??= new List<Entity>();
+        return AllEntities.Where(o => o.Searchable && WithinReachOfEntity(o, maxDistance) && !filter.Contains(o))
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
-    public Entity FindNearestAlly(bool seekMinion = false, float maxDistance = Mathf.Infinity) {
+    public Entity FindNearestAlly(List<Entity> filter = null, bool seekMinion = false,
+        float maxDistance = Mathf.Infinity) {
+        filter ??= new List<Entity>();
         return AllEntities.Where(o =>
                 o.Team == Team && o != this && o.Searchable && WithinReachOfEntity(o, maxDistance) &&
-                (!seekMinion || !o.IsLeader && !o.IsGrouped))
+                (!seekMinion || !o.IsLeader && !o.IsGrouped) && !filter.Contains(o))
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
-    public Entity FindNearestEnemy(Entity filter = null) {
-        return AllEntities.Where(o => o.Team != Team && o != this && o.Searchable && o != filter)
+    public Entity FindNearestEnemy(List<Entity> filter = null, float maxDistance = Mathf.Infinity) {
+        filter ??= new List<Entity>();
+        return AllEntities.Where(o =>
+                o.Team != Team && o != this && o.Searchable && WithinReachOfEntity(o, maxDistance) &&
+                !filter.Contains(o))
             .OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).FirstOrDefault();
     }
 
     public bool CanSeeEntity(Entity targetEntity) {
-        var targetDirection = targetEntity.transform.position - SightLine.position;
-        if (!Physics.Raycast(SightLine.position, targetDirection, out var hit,
-                Mathf.Infinity, EntityLayer)) return false;
-        hit.collider.gameObject.TryGetComponent<Entity>(out var e);
-        if (e == null) return false;
-        return e == targetEntity;
+        if (targetEntity == null) return false;
+        var sightPos = SightLine.position;
+        var targetDirection = targetEntity.transform.position - sightPos;
+        targetDirection.y = 0;
+        print(targetDirection);
+        RaycastHit[] results = new RaycastHit[10];
+        int hits = Physics.RaycastNonAlloc(sightPos, targetDirection, results,
+            Mathf.Infinity, EntityLayer);
+        Debug.DrawRay(sightPos,targetDirection,Color.green);
+        results = results.Where(o=> o.transform != null).OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).ToArray();
+        print(results.Length);
+        for (int i = 0; i < hits; i++) {
+            results[i].collider.gameObject.TryGetComponent<Entity>(out var e);
+            if (e == null) {
+                print(results[i].collider.gameObject);
+                return false;
+            }
+            if (e == targetEntity) return true;
+        }
+        return false;
     }
 
     public bool WithinReachOfEntity(Entity targetEntity, float maxDistance) {
@@ -188,7 +208,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     public virtual void CommitSpawn() {
         SpawnEffects.PlayEffect(transform.position);
     }
-    
+
     public virtual void Die(Entity killer) {
         if (IsDead) return;
         if (killer != null)

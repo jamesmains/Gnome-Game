@@ -52,21 +52,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Team: 0
-  Type: 0
-  IgnoreDamage: 0
-  IgnoreTeam: 0
+  IsLeader: 0
   Detectable: 0
+  Searchable: 0
+  WaitForTriggerToCommitSpawn: 0
   WaitForTriggerToCommitDie: 0
   StartingHealth: 0
-  DamageBuffer: 0.1
   Resistances: []
   Weaknesses: []
-  HurtVfx: {fileID: 0}
-  DeathVfx: {fileID: 6294508013172393196, guid: 8cd45fb61b9a9b34abaab41c337ec18a, type: 3}
+  SightLine: {fileID: 0}
+  SpawnEffects:
+    VfxList: []
+    SfxList: []
+  HurtEffects:
+    VfxList: []
+    SfxList: []
+  DeathEffects:
+    VfxList: []
+    SfxList: []
   Health: 0
   ParentEntity: {fileID: 0}
-  ImmuneToDamage: 0
+  IsGrouped: 0
   IsDead: 0
+  EnemiesDefeated: 0
   OnSpawn:
     m_PersistentCalls:
       m_Calls: []
@@ -83,6 +91,7 @@ MonoBehaviour:
   TriggerOnExit: 0
   TriggerOnStay: 0
   IgnoreFriendlies: 1
+  DamageSelfOnProcessHit: 0
   IgnoredLayers:
     serializedVersion: 2
     m_Bits: 0

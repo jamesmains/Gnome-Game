@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class PlayerCharacter : Character {
@@ -8,6 +10,9 @@ public class PlayerCharacter : Character {
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Furthest the minion can get away from the Leader")]
     private float LeashDistance = 5f;
+    
+    [SerializeField] [FoldoutGroup("Settings")]
+    private float SightDistance = 5f;
 
     [SerializeField] [FoldoutGroup("Hooks")]
     private Transform NonPcWeaponBulletOrigin;
@@ -19,10 +24,13 @@ public class PlayerCharacter : Character {
     private Vector3 playerInput;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private Entity LastFoccussedEntity;
+    private float NextMinionSeek;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private float NextMinionSeek;
+    private List<Entity> SeekIgnoreList = new();
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    private List<Entity> FocusIgnoreList = new();
 
     public static PlayerCharacter CurrentCharacter;
     public static UnityEvent<PlayerCharacter> OnPlayerCharacterPossession = new();
@@ -51,7 +59,8 @@ public class PlayerCharacter : Character {
     }
 
     protected virtual void HandlePlayerControlledInputs() {
-        if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI && HeldWeapon != null && HeldWeapon.Settings != null)
+        if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI && HeldWeapon != null &&
+            HeldWeapon.Settings != null)
             HeldWeapon.Fire(AimController.PlayerAim.BulletSpawnPoint);
 
         playerInput.x = Input.GetAxisRaw("Horizontal");
@@ -70,7 +79,7 @@ public class PlayerCharacter : Character {
         var dest = FocussedEntity.transform.position;
         HeldWeapon.FireTowards(NonPcWeaponBulletOrigin, dest);
     }
-    
+
     protected override void HandleMovement() {
         if (SelfEntity.IsLeader && Time.time > NextMinionSeek) {
             HandleSeek();
@@ -82,18 +91,31 @@ public class PlayerCharacter : Character {
         else {
             HandleComputerMovement();
         }
-        
+
         if (NavAgent.isStopped && this != CurrentCharacter) return;
         transform.position =
             Vector3.MoveTowards(transform.position, NavAgent.nextPosition, Time.deltaTime * NavAgent.speed);
     }
-    
+
 
     private void HandleSeek() {
-        var nearestAlly = SelfEntity.FindNearestAlly(seekMinion: true);
+        var nearestAlly = SelfEntity.FindNearestAlly(filter: SeekIgnoreList, seekMinion: true, maxDistance:SightDistance);
+        if (nearestAlly == null) {
+            SeekIgnoreList.Clear();
+            NextMinionSeek = Time.time + SeekMinionRate;
+            return;
+        }
+
+        if (!SelfEntity.CanSeeEntity(nearestAlly)) {
+            SeekIgnoreList.Add(nearestAlly);
+            NextMinionSeek = Time.time + SeekMinionRate;
+            return;
+        }
+
         if (nearestAlly != null && nearestAlly.TryGetComponent<PlayerCharacter>(out var character)) {
             character.AssignLeader(this);
             nearestAlly.IsGrouped = true;
+            SeekIgnoreList.Clear();
         }
 
         NextMinionSeek = Time.time + SeekMinionRate;
@@ -111,7 +133,7 @@ public class PlayerCharacter : Character {
         var thisPosition = transform.position;
 
         if (Leader != null && !SelfEntity.IsLeader) {
-            FocussedEntity = Leader == CurrentCharacter ? SelfEntity.FindNearestEnemy() : Leader.FocussedEntity;
+            FocussedEntity = Leader == CurrentCharacter ? SelfEntity.FindNearestEnemy(maxDistance:SightDistance) : Leader.FocussedEntity;
             bool needsToMoveToFocusTarget = FocussedEntity != null && SelfEntity.CanSeeEntity(FocussedEntity) &&
                                             !SelfEntity.WithinReachOfEntity(FocussedEntity,
                                                 HeldWeapon.Settings.AttackRange);
@@ -126,16 +148,28 @@ public class PlayerCharacter : Character {
         }
 
         else {
+            var canReach = false;
+            if (FocussedEntity != null) {
+                var path = new NavMeshPath();
+                canReach = NavAgent.CalculatePath(FocussedEntity.transform.position, path);    
+            }
+            
             if (FocussedEntity == null || FocussedEntity.IsDead ||
-                !SelfEntity.CanSeeEntity(FocussedEntity)) {
-                LastFoccussedEntity = FocussedEntity = SelfEntity.FindNearestEnemy(LastFoccussedEntity);
+                !canReach) {
+                if (FocussedEntity != null) {
+                    FocusIgnoreList.Add(FocussedEntity);
+                }
+                FocussedEntity = SelfEntity.FindNearestEnemy(filter:FocusIgnoreList,maxDistance:SightDistance);
+                if (FocussedEntity == null) {
+                    FocusIgnoreList.Clear();
+                }
             }
 
             TargetPosition = FocussedEntity ? FocussedEntity.transform.position : thisPosition;
         }
 
         var dir = (TargetPosition - thisPosition).normalized * TetherDistance;
-        
+
         TargetPosition -= dir;
         NavAgent.SetDestination(TargetPosition);
     }
@@ -155,6 +189,7 @@ public class PlayerCharacter : Character {
         if (CurrentCharacter != null) {
             CurrentCharacter.TargetPosition = CurrentCharacter.transform.position;
         }
+
         CurrentCharacter = this;
         OnPlayerCharacterPossession.Invoke(this);
     }
