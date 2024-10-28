@@ -86,7 +86,7 @@ public class Character : MonoBehaviour {
     }
 
     protected virtual void HandleLookDirection() {
-        var velocity = Rb.velocity;
+        var velocity = Rb.linearVelocity;
         FacingDirection = velocity.x == 0 ? FacingDirection : velocity.x > 0 ? -1 : 1;
         var shouldFaceTarget = Mathf.Abs(TargetPosition.x - transform.position.x) > MinimumVelocityForAnimating;
         var targetDirection = TargetPosition.x - transform.position.x;
