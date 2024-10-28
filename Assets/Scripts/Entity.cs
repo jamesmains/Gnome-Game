@@ -34,16 +34,16 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Add on a percentage of the damage")]
     protected List<DamageTypeModifier> Weaknesses;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     protected Transform SightLine;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     protected SpawnableEffect SpawnEffects;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     protected SpawnableEffect HurtEffects;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     protected SpawnableEffect DeathEffects;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
@@ -127,17 +127,14 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         var sightPos = SightLine.position;
         var targetDirection = targetEntity.transform.position - sightPos;
         targetDirection.y = 0;
-        print(targetDirection);
         RaycastHit[] results = new RaycastHit[10];
         int hits = Physics.RaycastNonAlloc(sightPos, targetDirection, results,
             Mathf.Infinity, EntityLayer);
         Debug.DrawRay(sightPos,targetDirection,Color.green);
         results = results.Where(o=> o.transform != null).OrderBy(o => Vector3.Distance(transform.position, o.transform.position)).ToArray();
-        print(results.Length);
         for (int i = 0; i < hits; i++) {
             results[i].collider.gameObject.TryGetComponent<Entity>(out var e);
-            if (e == null) {
-                print(results[i].collider.gameObject);
+            if (e == null) { // What the frick?
                 return false;
             }
             if (e == targetEntity) return true;

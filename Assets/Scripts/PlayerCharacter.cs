@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using ParentHouse.Utils;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class PlayerCharacter : Character {
-    [SerializeField] [FoldoutGroup("Settings")]
+    
+    [SerializeField] [FoldoutGroup("Settings")] 
     private float TetherDistance = 1f;
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Furthest the minion can get away from the Leader")]
@@ -14,14 +17,14 @@ public class PlayerCharacter : Character {
     [SerializeField] [FoldoutGroup("Settings")]
     private float SightDistance = 5f;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     private Transform NonPcWeaponBulletOrigin;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     private Character Leader;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
-    private Vector3 playerInput;
+    private Vector3 PlayerInput;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     private float NextMinionSeek;
@@ -58,13 +61,15 @@ public class PlayerCharacter : Character {
         }
     }
 
+    // Todo - Convert to new input system
     protected virtual void HandlePlayerControlledInputs() {
-        if (Input.GetMouseButton(0) && !MouseOverUserInterfaceUtil.IsMouseOverUI && HeldWeapon != null &&
+        if (Input.GetMouseButton(0) && !
+                MouseOverUserInterfaceUtil.IsMouseOverUI && HeldWeapon != null &&
             HeldWeapon.Settings != null)
             HeldWeapon.Fire(AimController.PlayerAim.BulletSpawnPoint);
 
-        playerInput.x = Input.GetAxisRaw("Horizontal");
-        playerInput.z = Input.GetAxisRaw("Vertical");
+        PlayerInput.x = Input.GetAxisRaw("Horizontal");
+        PlayerInput.z = Input.GetAxisRaw("Vertical");
     }
 
     protected virtual void HandleComputerControlledInputs() {
@@ -124,7 +129,7 @@ public class PlayerCharacter : Character {
     private void HandlePlayerMovement() {
         var thisPosition = transform.position;
 
-        TargetPosition = thisPosition + playerInput.normalized / 2;
+        TargetPosition = thisPosition + PlayerInput.normalized / 2;
         if (NavAgent.destination != TargetPosition)
             NavAgent.SetDestination(TargetPosition);
     }
@@ -184,7 +189,7 @@ public class PlayerCharacter : Character {
         FocussedEntity = attacker;
     }
 
-    [Button]
+    [Button] [PropertyOrder(99)]
     public void Possess() {
         if (CurrentCharacter != null) {
             CurrentCharacter.TargetPosition = CurrentCharacter.transform.position;

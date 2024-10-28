@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using ParentHouse.Audio;
+using ParentHouse.Utils;
 using UnityEngine;
 
 [Serializable]
@@ -9,7 +11,7 @@ public class SpawnableEffect {
 
     public void PlayEffect(Vector3 location) {
         foreach (var vfx in VfxList) {
-            Pooler.Instance.SpawnObject(vfx, location);
+            Pooler.SpawnAt(vfx, location);
         }
 
         foreach (var sfx in SfxList) {

@@ -1,3 +1,4 @@
+using ParentHouse.Utils;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class WeaponWithProjectile : Weapon {
     }
 
     private GameObject LaunchProjectile(Vector3 dir) {
-        var spawnedBullet = Pooler.Instance.SpawnObject(Settings.WeaponBullet, BulletOrigin.position);
+        var spawnedBullet = Pooler.SpawnAt(Settings.WeaponBullet, BulletOrigin.position);
         var projectile = spawnedBullet.GetComponentInChildren<Projectile>();
         if(Settings.WeaponDamageSources != null)
             spawnedBullet.GetComponentInChildren<EntityDamageSourceVolume>().DamageSources = Settings.WeaponDamageSources;

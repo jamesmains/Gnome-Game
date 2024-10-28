@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using ParentHouse.Utils;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void StartGame() {
-        Pooler.Instance.SpawnObject(playerObj, Vector3.zero);
+        Pooler.SpawnAt(playerObj, Vector3.zero);
         gameState = 1;
         score = 0;
         ScoreText.text = score.ToString();

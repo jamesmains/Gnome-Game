@@ -2,19 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ParentHouse.Utils;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour {
-    [SerializeField] [FoldoutGroup("Hooks")]
+    /// <summary>
+    /// Possible changes:
+    /// Could convert spawn radius to distance range.
+    /// I.e. Spawn entity at random distance from spawner to remove chance of spawning directly on spawn gfx
+    /// 
+    /// </summary>
+    [SerializeField] [FoldoutGroup("Dependencies")]
     private List<GameObject> SpawnPool;
     
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     private Transform SpawnPoint;
     
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     private GameObject SpawnEffect;
 
     [SerializeField] [FoldoutGroup("Settings")]
@@ -101,7 +108,7 @@ public class Spawner : MonoBehaviour {
             rX = flipX ? rX * -1 : rX;
             rY = flipY ? rY * -1 : rY;
             pos += new Vector3(rX, pos.y, rY);
-            var entity = Pooler.Instance.SpawnObject(ValidSpawnPool[r], pos).GetComponent<Entity>();
+            var entity = Pooler.SpawnAt(ValidSpawnPool[r], pos).GetComponent<Entity>();
             entity.Team = SpawnTeam;
             entity.OnDeath.AddListener(RemoveEntityFromList);
             if(PossesOnSpawn)
@@ -110,7 +117,7 @@ public class Spawner : MonoBehaviour {
                 UsedSpawnPool.Add(ValidSpawnPool[r]);
             }
             if(SpawnEffect!=null)
-                Pooler.Instance.SpawnObject(SpawnEffect, pos);
+                Pooler.SpawnAt(SpawnEffect, pos);
             SpawnedEntities.Add(entity);
         }
 

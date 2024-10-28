@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ParentHouse.Utils;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ public class PopupManager : MonoBehaviour {
         location += Instance.NumberVfxOffset;
         var c = crit ? Instance.CritTextColor : Instance.StandardTextColor;
         var size = crit ? Instance.CritFontSize : Instance.StandardFontSize;
-        var obj = Pooler.Instance.SpawnObject(Instance.ValuePopupDisplayObject, location);
+        var obj = Pooler.SpawnAt(Instance.ValuePopupDisplayObject, location);
         obj.GetComponent<ValuePopupDisplay>().SetValue(value.ToString(), c, size);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
@@ -16,22 +17,22 @@ public class Character : MonoBehaviour {
     [SerializeField] [FoldoutGroup("Settings")]
     protected bool CanAttackWhileNotMoving = true;
     
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     public Weapon HeldWeapon;
 
-    [SerializeField] [FoldoutGroup("Hooks")]
+    [SerializeField] [FoldoutGroup("Dependencies")]
     public Sprite CharacterSprite;
 
-    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    [SerializeField] [FoldoutGroup("Dependencies")] [ReadOnly]
     protected NavMeshAgent NavAgent;
 
-    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    [SerializeField] [FoldoutGroup("Dependencies")] [ReadOnly]
     public Entity SelfEntity;
 
-    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    [SerializeField] [FoldoutGroup("Dependencies")] [ReadOnly]
     public Rigidbody Rb;
 
-    [SerializeField] [FoldoutGroup("Hooks")] [ReadOnly]
+    [SerializeField] [FoldoutGroup("Dependencies")] [ReadOnly]
     protected Animator Anim;
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
@@ -49,6 +50,10 @@ public class Character : MonoBehaviour {
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public Entity FocussedEntity;
 
+    protected Vector3 Velocity => Rb.linearVelocity;
+    protected bool ShouldFaceTarget => Mathf.Abs(TargetPosition.x - transform.position.x) > MinimumVelocityForAnimating;
+    protected int TargetDirection => (TargetPosition.x - transform.position.x) > 0 ? -1 : 1;
+    
     protected static readonly int IsMoving = Animator.StringToHash("IsMoving");
 
     protected virtual void Awake() {
@@ -86,13 +91,12 @@ public class Character : MonoBehaviour {
     }
 
     protected virtual void HandleLookDirection() {
-        var velocity = Rb.linearVelocity;
-        FacingDirection = velocity.x == 0 ? FacingDirection : velocity.x > 0 ? -1 : 1;
-        var shouldFaceTarget = Mathf.Abs(TargetPosition.x - transform.position.x) > MinimumVelocityForAnimating;
-        var targetDirection = TargetPosition.x - transform.position.x;
-        targetDirection = targetDirection > 0 ? -1 : 1;
-        FacingDirection = shouldFaceTarget ? (int) targetDirection : FacingDirection;
-        var scale = transform.localScale;
+        FacingDirection = Velocity.x == 0 ? FacingDirection : Velocity.x > 0 ? -1 : 1;
+        FacingDirection = ShouldFaceTarget ? TargetDirection : FacingDirection;
+        SetScale(transform.localScale);
+    }
+
+    protected virtual void SetScale(Vector3 scale) {
         var targetScale = scale;
         targetScale.x = FacingDirection * CachedScale;
         scale = Vector3.MoveTowards(scale, targetScale, Time.deltaTime * ResizeSpeed);
