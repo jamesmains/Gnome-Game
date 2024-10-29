@@ -12,10 +12,10 @@ public class Character : MonoBehaviour {
     protected float MinimumVelocityForAnimating = 0.15f;
 
     [SerializeField] [FoldoutGroup("Settings")]
-    protected bool CanAttackWhileMoving = true;
+    protected bool CanAttackWhileMoving = true; // Move to weapon?
 
     [SerializeField] [FoldoutGroup("Settings")]
-    protected bool CanAttackWhileNotMoving = true;
+    protected bool CanAttackWhileNotMoving = true;  // Move to weapon?
     
     [SerializeField] [FoldoutGroup("Dependencies")]
     public Weapon HeldWeapon;

@@ -2587,6 +2587,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426892722710785499, guid: c2e39ec9d46e0aa41a7936656bc489ec, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.17
       objectReference: {fileID: 0}
@@ -18805,6 +18813,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1689469646506597334, guid: 5de7614372bf4a7479a6f9657ec2f408, type: 3}
+      propertyPath: Settings
+      value: 
+      objectReference: {fileID: 11400000, guid: ee3f4a16707cf3941bc8074a25a1b728, type: 2}
     - target: {fileID: 4312826894011387473, guid: 5de7614372bf4a7479a6f9657ec2f408, type: 3}
       propertyPath: m_Name
       value: Playable Character Chicken Special
@@ -18870,6 +18882,18 @@ PrefabInstance:
       propertyPath: IsLeader
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 63672294440115630, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
+      propertyPath: Resistances.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 63672294440115630, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
+      propertyPath: Resistances.Array.data[0].Percent
+      value: 0.515
+      objectReference: {fileID: 0}
+    - target: {fileID: 817292602909032540, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
+      propertyPath: Settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d4abca2b80fed345beb96afa8930505, type: 2}
     - target: {fileID: 2463886623636864935, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
       propertyPath: serializationData.Prefab
       value: 
@@ -46131,6 +46155,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 817292602909032540, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
+      propertyPath: Settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d4abca2b80fed345beb96afa8930505, type: 2}
     - target: {fileID: 2463886623636864935, guid: 541287abfdb15174fb36cf1ca030a174, type: 3}
       propertyPath: serializationData.Prefab
       value: 

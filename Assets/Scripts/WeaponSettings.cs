@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Weapon Setting", menuName = "Inventories and Items/Weapon Setting")]
 public class WeaponSettings : ScriptableObject {
@@ -12,6 +13,6 @@ public class WeaponSettings : ScriptableObject {
     [FoldoutGroup("Settings")] public float AttackRange = 3f;
     [FoldoutGroup("Settings")] public GameObject WeaponBullet;
     [FoldoutGroup("Settings")] public List<DamageSource> WeaponDamageSources = new();
-    [FoldoutGroup("Settings")] public bool AssignToWeilder = true;
-    [FoldoutGroup("Settings")] public bool AssignToWeilderTeam = true;
+    [FoldoutGroup("Settings")] public bool AssignToWielder = true;
+    [FoldoutGroup("Settings")] public bool AssignToWielderTeam = true;
 }

@@ -13,6 +13,7 @@ public class WeaponWithProjectile : Weapon {
     
     public override void FireTowards(Transform Origin, Vector3 Destination) {
         if (!CanFire()) return;
+        Destination.y = transform.position.y;
         base.FireTowards(Origin, Destination);
         
         var dir = (Destination - BulletOrigin.position).normalized;
@@ -29,7 +30,7 @@ public class WeaponWithProjectile : Weapon {
     }
 
     private void AttachProjectile(Entity entity) {
-        if(Settings.AssignToWeilder) entity.SetParentEntity(WieldingEntity);
-        if(Settings.AssignToWeilderTeam) entity.SetTeam(WieldingEntity.Team);
+        if(Settings.AssignToWielder) entity.SetParentEntity(WieldingEntity);
+        if(Settings.AssignToWielderTeam) entity.SetTeam(WieldingEntity.Team);
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 public class PlayerCharacter : Character {
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Minimum distance from Leader")]
-    private float TetherDistance = 1f;
+    private float FollowDistance = 1f;
 
     [SerializeField] [FoldoutGroup("Settings")] [Tooltip("Furthest the minion can get away from the Leader")]
     private float LeashDistance = 5f;
@@ -37,9 +37,9 @@ public class PlayerCharacter : Character {
     public static PlayerCharacter CurrentCharacter; // Pray that multiplayer is never a thing...
     public static UnityEvent<PlayerCharacter> OnPlayerCharacterPossession = new();
 
-    private bool NeedsToMoveToFocusTarget => FocussedEntity != null && SelfEntity.CanSeeEntity(FocussedEntity) &&
-                                             !SelfEntity.WithinReachOfEntity(FocussedEntity,
-                                                 HeldWeapon.Settings.AttackRange);
+    private bool NeedsToMoveToFocusTarget => FocussedEntity != null &&
+                                             !SelfEntity.WithinDistanceOfEntity(FocussedEntity,
+                                                 HasWeapon ? HeldWeapon.Settings.AttackRange : FollowDistance);
 
     private bool IsTooFarFromLeader => Leader != null && !SelfEntity.IsLeader &&
                                        Vector3.Distance(Leader.transform.position, transform.position) > LeashDistance;
@@ -47,7 +47,7 @@ public class PlayerCharacter : Character {
     private bool CanAttack(float v) => ((v != 0 && CanAttackWhileMoving) ||
                                         (v == 0 && CanAttackWhileNotMoving)) &&
                                        SelfEntity.CanSeeEntity(FocussedEntity) &&
-                                       SelfEntity.WithinReachOfEntity(FocussedEntity, HeldWeapon.Settings.AttackRange);
+                                       SelfEntity.WithinDistanceOfEntity(FocussedEntity, HeldWeapon.Settings.AttackRange);
 
     private bool CanReachFocusTarget => FocussedEntity != null &&
                                         NavAgent.CalculatePath(FocussedEntity.transform.position, new NavMeshPath());
@@ -89,8 +89,12 @@ public class PlayerCharacter : Character {
     }
 
     protected virtual void HandleComputerControlledInputs() {
-        // There is an issue with Entity Scaling. Large entites cannot see nor hit enemies
         if (FocussedEntity == null || !HasWeapon) return;
+        // print(($"Attack while moving? {(NavAgent.velocity.sqrMagnitude != 0 && CanAttackWhileMoving)}\n" +
+        //        $"Attack while not moving? {(NavAgent.velocity.sqrMagnitude == 0 && CanAttackWhileNotMoving)}\n" +
+        //        $"Can See Target? {SelfEntity.CanSeeEntity(FocussedEntity)}\n" +
+        //        $"Within Reach? {SelfEntity.WithinReachOfEntity(FocussedEntity, HeldWeapon.Settings.AttackRange)}"));
+              
         if (!CanAttack(NavAgent.velocity.sqrMagnitude)) return;
         var dest = FocussedEntity.transform.position;
         HeldWeapon.FireTowards(NonPcWeaponBulletOrigin, dest);
@@ -140,7 +144,7 @@ public class PlayerCharacter : Character {
     /// FocusIgnoreList is unused at the moment.
     /// </summary>
     private void SeekFocus() {
-        if (!SelfEntity.CanSeeEntity(FocussedEntity)) {
+        if (!SelfEntity.CanSeeEntity(FocussedEntity) && !SelfEntity.WithinDistanceOfEntity(FocussedEntity,SightDistance)) {
             FocussedEntity = null;
         }
 
@@ -175,7 +179,10 @@ public class PlayerCharacter : Character {
         TargetPosition = followLeader ? Leader.transform.position :
             NeedsToMoveToFocusTarget ? FocussedEntity.transform.position : transform.position;
 
-        var dir = (TargetPosition - transform.position).normalized * TetherDistance;
+        var dist = !followLeader && NeedsToMoveToFocusTarget && HasWeapon
+            ? HeldWeapon.Settings.AttackRange
+            : FollowDistance; 
+        var dir = (TargetPosition - transform.position).normalized * dist;
 
         TargetPosition -= dir;
         NavAgent.SetDestination(TargetPosition);
