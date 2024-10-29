@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4137979415745159727}
   - component: {fileID: -7732989191364949715}
   - component: {fileID: 9019248065079474922}
+  - component: {fileID: 8766602943196633635}
   m_Layer: 6
   m_Name: Debug Dummy Arrow Bullet
   m_TagString: Untagged
@@ -50,7 +51,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1d5aac91403c34286cbec2b8450e58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
   IsLeader: 0
   Detectable: 0
   Searchable: 0
@@ -74,6 +74,7 @@ MonoBehaviour:
   IsGrouped: 0
   IsDead: 0
   EnemiesDefeated: 0
+  Team: 0
   OnSpawn:
     m_PersistentCalls:
       m_Calls: []
@@ -211,6 +212,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8766602943196633635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5675946323038070197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aadc6488726fd8418ed4a967eb55f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1581952671114047744
 PrefabInstance:
   m_ObjectHideFlags: 0

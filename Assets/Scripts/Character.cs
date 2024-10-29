@@ -57,14 +57,24 @@ public class Character : MonoBehaviour {
     protected static readonly int IsMoving = Animator.StringToHash("IsMoving");
 
     protected virtual void Awake() {
+        Init();
+    }
+
+    protected virtual void Init() {
         if (Rb == null) Rb = GetComponent<Rigidbody>();
         if (Anim == null) Anim = GetComponent<Animator>();
-        Anim.speed = Anim.speed / transform.localScale.x; // interesting idea to slow the speed of animations down by the scale of the character...
-        Anim.speed = Mathf.Clamp(Anim.speed, 0.35f, 1f);
-        if (SelfEntity == null) SelfEntity = GetComponent<Entity>();
+        if (SelfEntity == null) SelfEntity = GetComponent<Entity>(); // Wtf?
         if (NavAgent == null) NavAgent = GetComponent<NavMeshAgent>();
+        
         CachedScale = transform.localScale.x;
         NavAgent.updatePosition = false;
+        
+        SetAnimationSpeed();
+    }
+
+    protected virtual void SetAnimationSpeed() {
+        Anim.speed = Anim.speed / transform.localScale.x; // interesting idea to slow the speed of animations down by the scale of the character...
+        Anim.speed = Mathf.Clamp(Anim.speed, 0.35f, 1f);
     }
 
     protected virtual void OnEnable() {

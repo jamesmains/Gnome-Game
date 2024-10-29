@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9074075672415661842}
   - component: {fileID: 7032509902263639730}
   - component: {fileID: -8921536054962025830}
+  - component: {fileID: 101638618170105562}
   m_Layer: 0
   m_Name: Projectile Sword Swing Thin
   m_TagString: Untagged
@@ -67,7 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1d5aac91403c34286cbec2b8450e58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Team: 0
   IsLeader: 0
   Detectable: 0
   Searchable: 0
@@ -91,6 +91,7 @@ MonoBehaviour:
   IsGrouped: 0
   IsDead: 0
   EnemiesDefeated: 0
+  Team: 0
   OnSpawn:
     m_PersistentCalls:
       m_Calls: []
@@ -141,3 +142,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
+--- !u!114 &101638618170105562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554896528621277258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aadc6488726fd8418ed4a967eb55f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -7,9 +7,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class Entity : MonoBehaviour, IDamageable, IKillable {
-    [Title("Entity Settings")] [SerializeField] [FoldoutGroup("Settings")]
-    public EntityTeams Team;
-
+    [Title("Entity Settings")] 
+    
     [SerializeField] [FoldoutGroup("Settings")]
     public bool IsLeader;
 
@@ -60,6 +59,9 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
 
     [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
     public int EnemiesDefeated;
+    
+    [SerializeField] [FoldoutGroup("Status")] [ReadOnly]
+    public EntityTeams Team;
 
     [SerializeField] [FoldoutGroup("Events")]
     public UnityEvent<Entity> OnSpawn = new();
@@ -126,8 +128,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         if (targetEntity == null) return false;
         var sightPos = SightLine.position;
         var targetDirection = targetEntity.transform.position - sightPos;
-        targetDirection.y = 0;
-        RaycastHit[] results = new RaycastHit[10];
+        RaycastHit[] results = new RaycastHit[10]; // Huh?? Is this shooting 10 at the same spot??
         int hits = Physics.RaycastNonAlloc(sightPos, targetDirection, results,
             Mathf.Infinity, EntityLayer);
         Debug.DrawRay(sightPos,targetDirection,Color.green);
@@ -142,6 +143,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         return false;
     }
 
+    // Least insane search query in this entire class...
     public bool WithinReachOfEntity(Entity targetEntity, float maxDistance) {
         return Vector3.Distance(transform.position, targetEntity.transform.position) < maxDistance;
     }
@@ -149,7 +151,14 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
     public virtual bool TakeDamage(List<DamageSource> damageSources, Vector3 hitPoint, Entity attacker = null,
         bool canHarmAttacker = false) {
         if (attacker != null && attacker == this && !canHarmAttacker) return false;
+        Health -= ResolveDamage(damageSources, hitPoint);
+        if (Health <= 0) Die(attacker);
+        HurtEffects.PlayEffect(transform.position);
+        OnTakeDamage.Invoke(this, attacker);
+        return true;
+    }
 
+    protected virtual int ResolveDamage(List<DamageSource> damageSources, Vector3 hitPoint) {
         var dmg = 0;
         foreach (var source in damageSources) {
             var sourceDmg = source.DealtDamage();
@@ -177,11 +186,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         }
 
         dmg = (int) Mathf.Clamp(dmg, 0, Mathf.Infinity);
-        Health -= dmg;
-        if (Health <= 0) Die(attacker);
-        HurtEffects.PlayEffect(transform.position);
-        OnTakeDamage.Invoke(this, attacker);
-        return true;
+        return dmg;
     }
 
     public virtual bool TakeDamage(int damage, Vector3 hitPoint, Entity attacker = null,
