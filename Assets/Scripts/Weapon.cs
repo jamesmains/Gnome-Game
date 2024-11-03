@@ -19,12 +19,10 @@ public abstract class Weapon : MonoBehaviour {
     }
 
     public virtual void Fire(Transform Origin) {
-        print("Attacking");
         CommitAttack(Origin);
     }
 
     public virtual void FireTowards(Transform Origin, Vector3 Destination) {
-        print("Attacking");
         CommitAttack(Origin);
     }
 

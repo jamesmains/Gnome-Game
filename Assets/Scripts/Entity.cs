@@ -126,7 +126,7 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
         if (targetEntity == null) return false;
         var sightPos = SightLine.position;
         var targetDirection = targetEntity.SightLine.position - sightPos;
-        RaycastHit[] results = new RaycastHit[10]; // Huh?? Is this shooting 10 at the same spot??
+        RaycastHit[] results = new RaycastHit[10]; // Todo - Investigate if this number can be adjusted
 
         int hits = Physics.RaycastNonAlloc(sightPos, targetDirection, results,
             Mathf.Infinity, EntityLayer);
@@ -141,7 +141,6 @@ public class Entity : MonoBehaviour, IDamageable, IKillable {
             }
             if (e == targetEntity) return true;
         }
-
         return false;
     }
 
