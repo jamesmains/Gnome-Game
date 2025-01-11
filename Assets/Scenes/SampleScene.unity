@@ -61494,10 +61494,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1385394857}
   - component: {fileID: 1385394858}
-  - component: {fileID: 1385394861}
   - component: {fileID: 1385394860}
   - component: {fileID: 1385394862}
-  - component: {fileID: 1385394864}
   - component: {fileID: 1385394863}
   m_Layer: 0
   m_Name: Systems
@@ -61636,19 +61634,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1385394861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385394855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c355a3a6143d6b247a346b44ddf0675e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSrc: {fileID: 1385394860}
 --- !u!114 &1385394862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61656,7 +61641,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1385394855}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 741184daddc5b6940a988cd5388aa96f, type: 3}
   m_Name: 
@@ -61672,25 +61657,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1385394855}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90927ae168c2f9243a837f4a4fc2cafa, type: 3}
+  m_Script: {fileID: 11500000, guid: 27d943aa27e5da85db19b2ceb95ed37d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActivePools: []
---- !u!114 &1385394864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385394855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 349fbdbf424f20045b4b0fc47bf955c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UILayer:
-    serializedVersion: 2
-    m_Bits: 32
+  audioSrc: {fileID: 1385394860}
 --- !u!1 &1400809570
 GameObject:
   m_ObjectHideFlags: 0
@@ -68011,6 +67981,51 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &1550799022
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1550799024}
+  - component: {fileID: 1550799023}
+  m_Layer: 0
+  m_Name: Pooler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1550799023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550799022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 475dcdf496f85d3238acec80d63a94de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActivePools: []
+--- !u!4 &1550799024
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550799022}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1556958491
 GameObject:
   m_ObjectHideFlags: 0
@@ -73685,7 +73700,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a320d8a6c499445838d51354fb8822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 1704978347}
 --- !u!1 &1714884306
 GameObject:
   m_ObjectHideFlags: 0
@@ -93441,3 +93455,4 @@ SceneRoots:
   - {fileID: 1492219787}
   - {fileID: 75380397}
   - {fileID: 2064822391}
+  - {fileID: 1550799024}
