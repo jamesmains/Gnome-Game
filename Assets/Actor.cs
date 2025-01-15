@@ -65,16 +65,18 @@ public class Actor : MonoBehaviour {
             Vector3 RandomNewPosition = Vector3.zero;
             RandomNewPosition.x = Random.Range(-1f, 1f);
             RandomNewPosition.z = Random.Range(-1f, 1f);
-            // if(LeaderActor == null)
-            //     OnMoveActor?.Invoke(RandomNewPosition, true);
-            // else {
-            //     if (Vector3.Distance(transform.position, LeaderActor.transform.position) < 1) {
-            //         var moveAwayDirection = LeaderActor.transform.position - transform.position;
-            //         OnMoveActor?.Invoke(moveAwayDirection, true);
-            //     }
-            //     else
-            //         OnMoveActor?.Invoke(LeaderActor.transform.position, false);
-            // }
+            if(LeaderActor == null)
+                OnMoveActor?.Invoke(RandomNewPosition, true);
+            else {
+                if (Vector3.Distance(transform.position, LeaderActor.transform.position) < 1) {
+                    Debug.Log("TOO CLOSE!");
+                    var moveAwayDirection = (transform.position - LeaderActor.transform.position).normalized * 1.5f;
+                    OnMoveActor?.Invoke(moveAwayDirection, true);
+                }
+                else if (Vector3.Distance(transform.position, LeaderActor.transform.position) > 2f) {
+                    OnMoveActor?.Invoke(LeaderActor.transform.position, false);
+                }
+            }
         }
     }
 
