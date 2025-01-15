@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class ItemDictionary : UnitySerializedDictionary<Item, int>{}
+// [Serializable]
+// public class ItemDictionary : UnitySerializedDictionary<Item, int>{}
 
 public abstract class UnitySerializedDictionary<TKey, TValue>:
     Dictionary<TKey, TValue>, ISerializationCallbackReceiver {
