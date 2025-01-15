@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -10,12 +11,14 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class Player : MonoBehaviour {
     [SerializeField, FoldoutGroup("Debug")]
+    private float CameraMoveSpeed = 10f;
+    
+    [SerializeField, FoldoutGroup("Debug")]
     private Actor DebugTargetActor;
 
     [SerializeField, FoldoutGroup("Status"), ReadOnly]
     private Actor CurrentActor;
-
-
+    
     [SerializeField, FoldoutGroup("Status"), ReadOnly]
     private Vector3 MoveInput;
 
@@ -62,8 +65,14 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
-        CurrentActor?.OnMoveActor?.Invoke(MoveInput);
+        CurrentActor?.OnMoveActor?.Invoke(MoveInput,true);
         CurrentActor?.OnAimWeapon?.Invoke(LookInput);
+    }
+
+    private void FixedUpdate() {
+        // Todo: replace with camera controller if needed
+        var targetPosition = CurrentActor ? CurrentActor.transform.position : transform.position;
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * CameraMoveSpeed);
     }
 
     [Button]

@@ -5,19 +5,20 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Actor : MonoBehaviour
-{
-    
+public class Actor : MonoBehaviour {
+    [SerializeField, FoldoutGroup("Debug")]
+    public Actor LeaderActor;
+
     [SerializeField, FoldoutGroup("Debug")]
     private bool BrainActive;
-    
+
     [SerializeField, FoldoutGroup("Debug"), ReadOnly]
     private float LastTimeSignaled;
-    
+
     [SerializeField, FoldoutGroup("Debug")]
     private ActorDetails DebugIncomingActor;
-    
-    [SerializeField, FoldoutGroup("Status"),ReadOnly]
+
+    [SerializeField, FoldoutGroup("Status"), ReadOnly]
     private ActorDetails CurrentActorDetails;
 
     // This may not be required
@@ -26,15 +27,18 @@ public class Actor : MonoBehaviour
 
     public ActorDetails Details {
         get => CurrentActorDetails;
-        set { CurrentActorDetails = value; SwapActor();}
+        set {
+            CurrentActorDetails = value;
+            SwapActor();
+        }
     }
-    
+
     public Action<ActorDetails> OnActorSet;
     public static Action<Actor> OnTryPossess;
-    public static Action<Actor,List<ActorComponent>> OnPossessed;
+    public static Action<Actor, List<ActorComponent>> OnPossessed;
     public static Action<Actor> OnReleasePossession;
 
-    public Action<Vector3> OnMoveActor;
+    public Action<Vector3, bool> OnMoveActor;
 
     public Action<Vector2> OnAimWeapon;
     public Action OnUseWeapon;
@@ -45,29 +49,38 @@ public class Actor : MonoBehaviour
     }
 
     private void OnEnable() {
-        OnTryPossess += HandlePossession; 
-        OnReleasePossession += HandleReleasePossession; 
+        OnTryPossess += HandlePossession;
+        OnReleasePossession += HandleReleasePossession;
     }
 
     private void OnDisable() {
-        OnTryPossess -= HandlePossession; 
+        OnTryPossess -= HandlePossession;
         OnReleasePossession -= HandleReleasePossession;
     }
-    
+
     private void Update() {
         if (!BrainActive) return;
-        if (Time.time > LastTimeSignaled + 1) {
+        if (Time.time > LastTimeSignaled + .1f) {
             LastTimeSignaled = Time.time;
             Vector3 RandomNewPosition = Vector3.zero;
             RandomNewPosition.x = Random.Range(-1f, 1f);
             RandomNewPosition.z = Random.Range(-1f, 1f);
-            OnMoveActor?.Invoke(RandomNewPosition);
+            // if(LeaderActor == null)
+            //     OnMoveActor?.Invoke(RandomNewPosition, true);
+            // else {
+            //     if (Vector3.Distance(transform.position, LeaderActor.transform.position) < 1) {
+            //         var moveAwayDirection = LeaderActor.transform.position - transform.position;
+            //         OnMoveActor?.Invoke(moveAwayDirection, true);
+            //     }
+            //     else
+            //         OnMoveActor?.Invoke(LeaderActor.transform.position, false);
+            // }
         }
     }
 
     private void HandlePossession(Actor actor) {
         if (actor != this) return;
-        OnPossessed.Invoke(this,AttachedComponents);
+        OnPossessed.Invoke(this, AttachedComponents);
         BrainActive = false;
     }
 
@@ -85,5 +98,5 @@ public class Actor : MonoBehaviour
     [Button]
     public void DebugSwapActor() {
         Details = DebugIncomingActor;
-    }   
+    }
 }

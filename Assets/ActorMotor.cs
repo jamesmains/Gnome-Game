@@ -4,6 +4,8 @@ using UnityEngine.AI;
 
 public class ActorMotor : ActorComponent
 {
+    
+    
     [SerializeField, FoldoutGroup("Dependencies"), ReadOnly]
     public NavMeshAgent Agent;
 
@@ -23,11 +25,12 @@ public class ActorMotor : ActorComponent
         Actor.OnMoveActor -= MoveAgent;
     }
 
-    private void MoveAgent(Vector3 moveDirection) {
-        if (Agent.destination != transform.position + moveDirection) {
-            Agent.SetDestination(transform.position + moveDirection);
-            if(moveDirection.x != 0)
-                FacingDirection = moveDirection.x > 0 ? -1 : 1;
+    private void MoveAgent(Vector3 moveTarget, bool asDirection) {
+        var targetPosition = asDirection ? transform.position + moveTarget : moveTarget;
+        if (Agent.destination != targetPosition) {
+            Agent.SetDestination(targetPosition);
+            if(moveTarget.x != 0)
+                FacingDirection = moveTarget.x > 0 ? -1 : 1;
         }
     }
 }
